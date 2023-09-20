@@ -1,5 +1,5 @@
 use super::RunnableCommand;
-use crate::{dalamud_version_manager::DalamudVersionManager, logger::info};
+use crate::{dalamud_version_manager::DalamudVersionManager, directories, logger::info};
 use anyhow::{anyhow, Result};
 use async_trait::async_trait;
 use clap::Parser;
@@ -15,7 +15,12 @@ impl RunnableCommand for Current {
             Err(e) => Err(anyhow!("Failed to get current Dalamud version: {}", e)),
             Ok(ver) => {
                 if let Some(ver) = ver {
-                    info!("Currently using Dalamud@{}.", ver);
+                    let current_dir = directories::get_current_version_dir();
+                    info!(
+                        "Currently using Dalamud@{} linked at {}",
+                        ver,
+                        current_dir.unwrap().display()
+                    );
                 } else {
                     info!("No version of Dalamud is currently in use.");
                 }

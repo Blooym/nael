@@ -1,6 +1,7 @@
 [package]
 name = "nael"
-description = "Install and manage different installations of Dalamud."
+authors = ["Blooym"]
+description = "Install and manage different installations of Dalamud on your system."
 version = "0.1.0"
 license-file = "LICENCE"
 edition = "2021"
@@ -8,6 +9,7 @@ categories = ["command-line-utilities"]
 homepage = "https://github.com/Blooym/Nael"
 repository = "https://github.com/Blooym/Nael"
 readme = "README.md"
+keywords = ["dalamud", "version", "manager"]
 
 [profile.release]
 strip = true
