@@ -154,4 +154,4 @@ jobs:
       - name: Publish crate
         run: |
           cargo login ${{ secrets.CARGO_REGISTRY_TOKEN }}
-          cargo publish --dry-run
+          cargo publish
