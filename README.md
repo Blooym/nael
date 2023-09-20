@@ -11,7 +11,7 @@ As of now, the only installation methods available involve manually compiling th
 To install Nael using Cargo, run the following:
 
 ```
-cargo install --git https://github.com/Blooym/Nael`
+cargo install --git https://github.com/Blooym/Nael
 ```
 
 ### Cargo Build
