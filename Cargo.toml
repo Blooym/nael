@@ -1,0 +1,27 @@
+[package]
+name = "nael"
+description = "Install and manage different installations of Dalamud."
+version = "0.1.0"
+license-file = "LICENCE"
+edition = "2021"
+categories = ["command-line-utilities"]
+homepage = "https://github.com/Blooym/Nael"
+repository = "https://github.com/Blooym/Nael"
+readme = "README.md"
+
+[profile.release]
+strip = true
+codegen-units = 1
+
+[dependencies]
+anyhow = "1.0.75"
+async-trait = "0.1.73"
+clap = { version = "4.4.4", features = ["derive"] }
+colored = "2.0.4"
+dirs = "5.0.1"
+indicatif = "0.17.6"
+reqwest = { version = "0.11.20", features = ["rustls-tls"] }
+symlink = "0.1.0"
+tempfile = "3.8.0"
+tokio = { version = "1.32.0", features = ["full"] }
+zip = "0.6.6"
