@@ -3,6 +3,7 @@ use crate::{dalamud_version_manager::DalamudVersionManager, logger::info};
 use anyhow::Result;
 use async_trait::async_trait;
 use clap::Parser;
+use colored::Colorize;
 
 /// List all installed versions of Dalamud.
 #[derive(Debug, Parser)]
@@ -17,17 +18,17 @@ impl RunnableCommand for List {
             return Ok(());
         }
 
+        // let current = DalamudVersionManager::get_current(), if none then return an error with a message
         let current = DalamudVersionManager::get_current()?;
-
         let msg = format!(
             "Installed versions of Dalamud:\n{}",
             versions
                 .iter()
                 .map(|v| {
                     if Some(v) == current.as_ref() {
-                        format!("* {}", v)
+                        format!(" - {}", v.bright_green())
                     } else {
-                        format!("  {}", v)
+                        format!(" - {}", v)
                     }
                 })
                 .collect::<Vec<_>>()

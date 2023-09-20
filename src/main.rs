@@ -48,7 +48,7 @@ async fn main() {
     let opts = Opts::parse();
 
     if let Err(err) = opts.cmd.run().await {
-        error!("{}", err);
+        error!("Something went wrong during command execution: {}", err);
         std::process::exit(1);
     }
 }

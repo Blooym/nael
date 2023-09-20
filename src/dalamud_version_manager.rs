@@ -146,6 +146,7 @@ impl DalamudVersionManager {
         if !versions_dir.exists() {
             return Ok(vec![]);
         }
+
         let mut versions = fs::read_dir(versions_dir)?
             .filter_map(|entry| {
                 let entry = entry.ok()?;
@@ -167,12 +168,13 @@ impl DalamudVersionManager {
             return Ok(None);
         }
 
-        let current_version = match fs::read_link(&current_version_dir) {
+        let current_version = match fs::canonicalize(&current_version_dir) {
             Ok(path) => path,
             Err(e) => {
                 if e.kind() == std::io::ErrorKind::NotFound {
                     return Ok(None);
                 } else {
+                    println!("Failed to get current version: {}", e);
                     return Err(e.into());
                 }
             }
@@ -217,7 +219,7 @@ impl DalamudVersionManager {
             return Ok(());
         }
 
-        fs::remove_dir_all(&current_version_dir)?;
+        symlink::remove_symlink_dir(&current_version_dir)?;
 
         Ok(())
     }
