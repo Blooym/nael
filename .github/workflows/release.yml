@@ -1,0 +1,189 @@
+name: Release
+
+permissions:
+  contents: write
+
+on:
+  push:
+    tags:
+      - '**[0-9]+.[0-9]+.[0-9]+*'
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      has-releases: ${{ steps.plan.outputs.has-releases }}
+      releases: ${{ steps.plan.outputs.releases }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install cargo-dist
+        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.2.0/cargo-dist-installer.sh | sh"
+
+      - id: plan
+        run: |
+          cargo dist plan --tag=${{ github.ref_name }} --output-format=json > dist-manifest.json
+          echo "dist plan ran successfully"
+          cat dist-manifest.json
+
+          # Create the Github Release™ based on what cargo-dist thinks it should be
+          ANNOUNCEMENT_TITLE=$(jq --raw-output ".announcement_title" dist-manifest.json)
+          IS_PRERELEASE=$(jq --raw-output ".announcement_is_prerelease" dist-manifest.json)
+          jq --raw-output ".announcement_github_body" dist-manifest.json > new_dist_announcement.md
+          gh release create ${{ github.ref_name }} --draft --prerelease="$IS_PRERELEASE" --title="$ANNOUNCEMENT_TITLE" --notes-file=new_dist_announcement.md
+          echo "created announcement!"
+
+          # Upload the manifest to the Github Release™
+          gh release upload ${{ github.ref_name }} dist-manifest.json
+          echo "uploaded manifest!"
+
+          # Disable all the upload-artifacts tasks if we have no actual releases
+          HAS_RELEASES=$(jq --raw-output ".releases != null" dist-manifest.json)
+          echo "has-releases=$HAS_RELEASES" >> "$GITHUB_OUTPUT"
+          echo "releases=$(jq --compact-output ".releases" dist-manifest.json)" >> "$GITHUB_OUTPUT"
+
+  upload-local-artifacts:
+    needs: plan
+    if: ${{ needs.plan.outputs.has-releases == 'true' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - os: "macos-latest"
+          dist-args: "--artifacts=local --target=aarch64-apple-darwin"
+          install-dist: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.2.0/cargo-dist-installer.sh | sh"
+        - os: "macos-latest"
+          dist-args: "--artifacts=local --target=x86_64-apple-darwin"
+          install-dist: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.2.0/cargo-dist-installer.sh | sh"
+        - os: "windows-latest"
+          dist-args: "--artifacts=local --target=x86_64-pc-windows-msvc"
+          install-dist: "irm  https://github.com/axodotdev/cargo-dist/releases/download/v0.2.0/cargo-dist-installer.ps1 | iex"
+        - os: "ubuntu-latest"
+          dist-args: "--artifacts=local --target=x86_64-unknown-linux-gnu"
+          install-dist: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.2.0/cargo-dist-installer.sh | sh"
+    runs-on: ${{ matrix.os }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install cargo-dist
+        run: ${{ matrix.install-dist }}
+
+      - name: Run cargo-dist
+        run: |
+          # Actually do builds and make zips and whatnot
+          cargo dist build --tag=${{ github.ref_name }} --output-format=json ${{ matrix.dist-args }} > dist-manifest.json
+          echo "dist ran successfully"
+          cat dist-manifest.json
+
+          # Parse out what we just built and upload it to the Github Release™
+          jq --raw-output ".artifacts[]?.path | select( . != null )" dist-manifest.json > uploads.txt
+          echo "Uploading..."
+          cat uploads.txt
+          gh release upload ${{ github.ref_name }} $(cat uploads.txt)
+          echo "Uploaded!"
+
+  upload-global-artifacts:
+    needs: upload-local-artifacts
+    runs-on: "ubuntu-latest"
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install cargo-dist
+        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.2.0/cargo-dist-installer.sh | sh"
+
+      - name: Fetch local artifacts
+        run: |
+          gh release download ${{ github.ref_name }} --dir target/distrib/
+
+      - name: Run cargo-dist
+        run: |
+          cargo dist build --tag=${{ github.ref_name }} --output-format=json "--artifacts=global" > dist-manifest.json
+          echo "dist ran successfully"
+          cat dist-manifest.json
+
+          # Parse out what we just built and upload it to the Github Release™
+          jq --raw-output ".artifacts[]?.path | select( . != null )" dist-manifest.json > uploads.txt
+          echo "Uploading..."
+          cat uploads.txt
+          gh release upload ${{ github.ref_name }} $(cat uploads.txt)
+          echo "Uploaded!"
+
+  upload-homebrew-formula:
+    needs: [plan, upload-global-artifacts]
+    runs-on: "ubuntu-latest"
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      RELEASES: ${{ needs.plan.outputs.releases }}
+      GITHUB_USER: "github-actions[bot]"
+      GITHUB_EMAIL: "github-actions[bot]@users.noreply.github.com"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+
+      - name: Fetch local artifacts
+        run: |
+          gh release download ${{ github.ref_name }} --dir Formula --repo ${GITHUB_REPOSITORY} --clobber
+
+      - name: Commit formula files
+        run: |
+          git config --global user.name "${GITHUB_USER}"
+          git config --global user.email "${GITHUB_EMAIL}"
+
+          for release in $(echo "$RELEASES" | jq --compact-output '.[]'); do
+            name=$(echo "$release" | jq .app_name --raw-output)
+            version=$(echo "$release" | jq .app_version --raw-output)
+
+            git add Formula/${name}.rb
+            git commit -m "${name} ${version}"
+          done
+          git push
+
+  publish-release:
+    needs: [plan, upload-local-artifacts, upload-global-artifacts]
+    if: ${{ always() && needs.plan.result == 'success' && (needs.upload-local-artifacts.result == 'skipped' || needs.upload-local-artifacts.result == 'success') && (needs.upload-global-artifacts.result == 'skipped' || needs.upload-global-artifacts.result == 'success') }}
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Mark release as non-draft
+        run: |
+          gh release edit ${{ github.ref_name }} --draft=false
+
+  publish-crate:
+    needs: [publish-release]
+    runs-on: ubuntu-latest
+    env:
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Rust Toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          cache: true
+
+      - name: Publish crate
+        run: |
+          cargo login ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          cargo publish

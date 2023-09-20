@@ -4,23 +4,30 @@ A simplistic CLI-based Dalamud Version Manager inspired by [nvm](https://github.
 
 ## Installation
 
-As of now, the only installation methods available involve manually compiling this repository. In the future a more streamlined installation process will be available.
+### Using a script
 
-### Cargo Install
+To install Nael using a script, run the following:
+
+```
+curl -o- https://raw.githubusercontent.com/Blooym/Nael/main/install.sh | sh
+```
+
+### Using "cargo install"
 
 To install Nael using Cargo, run the following:
 
 ```
-cargo install --git https://github.com/Blooym/Nael
+cargo install nael
 ```
 
-### Cargo Build
+### Using "cargo build"
 
 Run the following to build the project and then move the binary to your `PATH`:
 
 ```
 git clone https://github.com/Blooym/Nael.git && cd Nael && cargo build --release
 ```
+
 
 ## Integration with C# Projects
 

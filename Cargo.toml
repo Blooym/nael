@@ -15,6 +15,9 @@ keywords = ["dalamud", "version", "manager"]
 strip = true
 codegen-units = 1
 
+[profile.dist]
+inherits = "release"
+
 [dependencies]
 anyhow = "1.0.75"
 async-trait = "0.1.73"
@@ -22,8 +25,23 @@ clap = { version = "4.4.4", features = ["derive"] }
 colored = "2.0.4"
 dirs = "5.0.1"
 indicatif = "0.17.6"
-reqwest = { version = "0.11.20", features = ["rustls-tls"] }
+reqwest = { version = "0.11.20", features = [
+    "rustls-tls",
+], default-features = false }
 symlink = "0.1.0"
 tempfile = "3.8.0"
 tokio = { version = "1.32.0", features = ["full"] }
 zip = "0.6.6"
+
+[workspace.metadata.dist]
+cargo-dist-version = "0.2.0"
+ci = ["github"]
+installers = ["shell", "powershell", "homebrew"]
+tap = "Blooym/Nael"
+targets = [
+    "x86_64-unknown-linux-gnu",
+    "x86_64-apple-darwin",
+    "x86_64-pc-windows-msvc",
+    "aarch64-apple-darwin",
+]
+publish-jobs = ["homebrew"]
