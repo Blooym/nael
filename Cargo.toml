@@ -2,7 +2,7 @@
 name = "nael"
 authors = ["Blooym"]
 description = "Install and manage different installations of Dalamud quickly and easily."
-version = "0.1.0"
+version = "0.1.1"
 license = "AGPL-3.0-or-later"
 edition = "2021"
 categories = ["command-line-utilities"]
