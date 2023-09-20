@@ -120,37 +120,6 @@ jobs:
           gh release upload ${{ github.ref_name }} $(cat uploads.txt)
           echo "Uploaded!"
 
-  upload-homebrew-formula:
-    needs: [plan, upload-global-artifacts]
-    runs-on: "ubuntu-latest"
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      RELEASES: ${{ needs.plan.outputs.releases }}
-      GITHUB_USER: "github-actions[bot]"
-      GITHUB_EMAIL: "github-actions[bot]@users.noreply.github.com"
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          repository: ${{ github.repository }}
-
-      - name: Fetch local artifacts
-        run: |
-          gh release download ${{ github.ref_name }} --dir Formula --repo ${GITHUB_REPOSITORY} --clobber
-
-      - name: Commit formula files
-        run: |
-          git config --global user.name "${GITHUB_USER}"
-          git config --global user.email "${GITHUB_EMAIL}"
-
-          for release in $(echo "$RELEASES" | jq --compact-output '.[]'); do
-            name=$(echo "$release" | jq .app_name --raw-output)
-            version=$(echo "$release" | jq .app_version --raw-output)
-
-            git add Formula/${name}.rb
-            git commit -m "${name} ${version}"
-          done
-          git push
-
   publish-release:
     needs: [plan, upload-local-artifacts, upload-global-artifacts]
     if: ${{ always() && needs.plan.result == 'success' && (needs.upload-local-artifacts.result == 'skipped' || needs.upload-local-artifacts.result == 'success') && (needs.upload-global-artifacts.result == 'skipped' || needs.upload-global-artifacts.result == 'success') }}
