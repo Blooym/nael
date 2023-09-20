@@ -22,9 +22,20 @@ Run `nael help` to see a list of commands and their usage.
 
 ## Integration with C# Projects
 
-To better integrate Nael with Dalamud C# projects, such as plugins, you should set the `DALAMUD_HOME` environment variable to the path of the "current" folder Nael has created for you. This will allow you to use the `DALAMUD_HOME` environment variable in your project to access the Dalamud installation and switch between versions without having to change your `.csproj` file. 
+To better integrate Nael with Dalamud C# projects, such as plugins, you should set the `DALAMUD_HOME` environment variable to the path of the "current" folder Nael has created for you. You should then add the following to your `csproj` file to replace your current DalamudLibPath property:
 
-You can find the path to the "current" folder by running `nael current` in your terminal after installing any version of Dalamud.
+```xml
+<PropertyGroup>
+  <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+  <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('Linux'))">$(HOME)/.xlcore/dalamud/Hooks/dev/</DalamudLibPath>
+  <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(HOME)/Library/Application Support/XIV on Mac/dalamud/Hooks/dev/</DalamudLibPath>
+  <DalamudLibPath Condition="$(DALAMUD_HOME) != ''">$(DALAMUD_HOME)/</DalamudLibPath>
+</PropertyGroup>
+```
+
+This will enable you to use the `DALAMUD_HOME` environment variable to override the default DalamudLibPath and use Nael to manage your Dalamud version instead whilst still maintaining compatibility for other users who may not be using Nael.
+
+You can find the path to the "current" folder by running `nael current` in your terminal after installing & selecting any version of Dalamud.
 
 ## License
 
