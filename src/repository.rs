@@ -7,7 +7,7 @@ pub const DEFAULT_DISTRIB_REPO_FILE: &str = "latest.zip";
 #[derive(Debug)]
 pub struct Repository {
     pub url: String,
-    release_file: String,
+    pub release_file: String,
 }
 
 impl Default for Repository {

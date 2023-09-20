@@ -1,7 +1,7 @@
 [package]
 name = "nael"
 authors = ["Blooym"]
-description = "Install and manage different installations of Dalamud on your system."
+description = "Install and manage different installations of Dalamud quickly and easily."
 version = "0.1.0"
 license-file = "LICENCE"
 edition = "2021"
