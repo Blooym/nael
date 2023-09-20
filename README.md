@@ -4,37 +4,17 @@ A simplistic CLI-based Dalamud Version Manager inspired by [nvm](https://github.
 
 ## Installation
 
-### Using a shell script
+### From a release
 
-```sh
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/Blooym/Nael/releases/download/v0.1.1/nael-installer.sh | sh
-```
-
-### Using a PowerShell script
-
-```sh
-irm https://github.com/Blooym/Nael/releases/download/v0.1.1/nael-installer.ps1 | iex
-```
+Go to the [releases page](https://github.com/Blooym/Nael/releases) and either use the script for your platform to automatically download a pre-built binary and add it to your `PATH` or manually download the binary for your platform and set it up yourself.
 
 ### Using "cargo install"
 
-To install Nael using Cargo, run the following:
+To build & install Nael using Cargo, run the following:
 
 ```
 cargo install nael
 ```
-
-### Using "cargo build"
-
-Run the following to build the project and then move the binary to your `PATH`:
-
-```
-git clone https://github.com/Blooym/Nael.git && cd Nael && cargo build --release
-```
-
-### From a release
-
-Download the latest release from the [releases page](https://github.com/Blooym/Nael/releases) and move the binary for your platform to your `PATH`.
 
 ## Usage
 
