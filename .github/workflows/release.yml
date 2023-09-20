@@ -132,7 +132,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: ${{ github.repository }}
-          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
 
       - name: Fetch local artifacts
         run: |
