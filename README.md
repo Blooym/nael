@@ -4,11 +4,11 @@ A simplistic CLI-based Dalamud Version Manager inspired by [nvm](https://github.
 
 ## Installation
 
-### From a release
+### Pre-built releases
 
-Go to the [releases page](https://github.com/Blooym/Nael/releases) and either use the script for your platform to automatically download a pre-built binary and add it to your `PATH` or manually download the binary for your platform and set it up yourself.
+Go to the [releases page](https://github.com/Blooym/Nael/releases) and manually download a pre-built binary for your device add place it somewhere in your system `PATH`. 
 
-### Using "cargo install"
+### Using Cargo
 
 To build & install Nael using Cargo, run the following:
 
