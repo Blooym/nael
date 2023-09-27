@@ -1,20 +1,15 @@
-use crate::{
-    directories::get_versions_dir,
-    repository::{Repository, DEFAULT_DISTRIB_REPO_FILE},
-};
+use crate::{fs::directories::get_versions_dir, logger::warning, repository::DistRepository};
 use anyhow::{anyhow, Context, Result};
 use indicatif::{ProgressBar, ProgressStyle};
 use std::{
     fs::{self, File},
-    io::Write,
     path,
     time::Duration,
 };
 use tempfile::tempdir;
 use zip::ZipArchive;
 
-const DOWNLOAD_PROGRESS_BAR_TEMPLATE: &str =
-    "[{elapsed_precise}] [{bar:40.cyan/blue}] {bytes}/{total_bytes} ({eta}) {msg}";
+/// The template for the progress bar used when extracting the Dalamud archive.
 const EXTRACT_PROGRESS_BAR_TEMPLATE: &str = "[{elapsed_precise}] {spinner:.green} {msg}";
 
 /// A struct that contains logic for interacting with Dalamud versions.
@@ -22,42 +17,8 @@ const EXTRACT_PROGRESS_BAR_TEMPLATE: &str = "[{elapsed_precise}] {spinner:.green
 pub struct DalamudVersionManager {}
 
 impl DalamudVersionManager {
-    /// Downloads the file at the given URL and writes it to the given path.
-    async fn download_file_with_progress(url: String, path: path::PathBuf) -> Result<()> {
-        // Create the download request and setup a progress bar.
-        let mut download = reqwest::get(&url).await?;
-        let download_progress_bar = ProgressBar::new(download.content_length().unwrap_or(0));
-        download_progress_bar.set_style(
-            ProgressStyle::default_bar()
-                .template(DOWNLOAD_PROGRESS_BAR_TEMPLATE)
-                .unwrap()
-                .progress_chars("#>-"),
-        );
-        download_progress_bar.set_message(url.clone());
-
-        // Check if the request was successful.
-        if !download.status().is_success() {
-            download_progress_bar.finish_and_clear();
-            return Err(anyhow!(
-                "An error occured whilst trying to download from {}: {}",
-                url,
-                download.status()
-            ));
-        }
-
-        // Write the downloaded data to the file and update the progress bar.
-        let mut file = File::create(&path)?;
-        while let Some(chunk) = download.chunk().await? {
-            file.write_all(&chunk)?;
-            download_progress_bar.inc(chunk.len() as u64);
-        }
-        download_progress_bar.finish_and_clear();
-
-        Ok(())
-    }
-
     /// Extracts the given file to the given directory.
-    fn extract_file_with_progress(path: path::PathBuf, extract_dir: path::PathBuf) -> Result<()> {
+    fn extract_file_with_progress(path: &path::PathBuf, extract_dir: &path::PathBuf) -> Result<()> {
         // Create the progress bar.
         let extract_progress_bar = ProgressBar::new_spinner();
         extract_progress_bar.set_style(
@@ -71,7 +32,7 @@ impl DalamudVersionManager {
 
         // Extract the archive.
         let mut archive = ZipArchive::new(File::open(path)?)?;
-        archive.extract(&extract_dir)?;
+        archive.extract(extract_dir)?;
         extract_progress_bar.finish_and_clear();
 
         Ok(())
@@ -96,13 +57,23 @@ impl DalamudVersionManager {
         }
 
         // Format the download URL and create a temporary directory to download to.
-        let url = Repository::default().get_download_url(branch);
         let dir = tempdir()?;
-        let file_path = dir.path().join(DEFAULT_DISTRIB_REPO_FILE);
+        let archive_path: path::PathBuf = dir.path().join("download.zip");
+        let archive_url = DistRepository::default().get_download_url(branch);
 
         // Download & extract the archive.
-        Self::download_file_with_progress(url, file_path.clone()).await?;
-        Self::extract_file_with_progress(file_path, extract_dir)?;
+        archive_url
+            .download_with_progress(archive_path.clone())
+            .await?;
+        Self::extract_file_with_progress(&archive_path, &extract_dir)?;
+
+        let version_url = DistRepository::default().get_version_info_url(branch);
+        if let Err(err) = version_url
+            .download_with_progress(extract_dir.join("version"))
+            .await
+        {
+            warning!("Unable to obtain version information: {}\nThis may cause issues when trying to use the update command later.", err);
+        }
 
         // Remove the temporary directory explicitly.
         // (This is also done automatically when the dir goes out of scope but we want to do it explicitly incase it fails.)
@@ -161,7 +132,7 @@ impl DalamudVersionManager {
 
     /// Returns the currently active version of Dalamud.
     pub fn get_current() -> Result<Option<String>> {
-        let current_version_dir = crate::directories::get_current_version_dir()
+        let current_version_dir = crate::fs::directories::get_current_version_dir()
             .context("Failed to get current version directory.")?;
 
         if !current_version_dir.exists() {
@@ -200,7 +171,7 @@ impl DalamudVersionManager {
         }
 
         // Remove the current version
-        let current_version_dir = crate::directories::get_current_version_dir()
+        let current_version_dir = crate::fs::directories::get_current_version_dir()
             .context("Failed to get current version directory.")?;
         let _ = fs::remove_dir_all(&current_version_dir);
 
@@ -212,7 +183,7 @@ impl DalamudVersionManager {
 
     /// Unsets the currently active version of Dalamud.
     pub fn unset_current() -> Result<()> {
-        let current_version_dir = crate::directories::get_current_version_dir()
+        let current_version_dir = crate::fs::directories::get_current_version_dir()
             .context("Failed to get current version directory.")?;
 
         if !current_version_dir.exists() {

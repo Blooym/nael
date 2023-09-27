@@ -1,10 +1,12 @@
-// macro_rules! debug {
-//     ($($arg:tt)*) => {
-//         use colored::Colorize;
-//         println!("{}", format!($($arg)*).dimmed());
-//     };
-// }
-// pub(crate) use debug;
+#![allow(unused_macros)]
+macro_rules! debug {
+    ($($arg:tt)*) => {
+        use colored::Colorize;
+        println!("[DEBUG] {}", format!($($arg)*).dimmed());
+    };
+}
+#[allow(unused_imports)]
+pub(crate) use debug;
 
 macro_rules! info {
     ($($arg:tt)*) => {
@@ -13,18 +15,20 @@ macro_rules! info {
 }
 pub(crate) use info;
 
-// macro_rules! warning {
-//     ($($arg:tt)*) => {
-//         use colored::Colorize;
-//         eprintln!("{}", format!($($arg)*).yellow());
-//     };
-// }
-// pub(crate) use warning;
+#[allow(unused_macros)]
+macro_rules! warning {
+    ($($arg:tt)*) => {
+        use colored::Colorize;
+        eprintln!("[WARN] {}", format!($($arg)*).yellow());
+    };
+}
+#[allow(unused_imports)]
+pub(crate) use warning;
 
 macro_rules! error {
     ($($arg:tt)*) => {
         use colored::Colorize;
-        eprintln!("{}", format!($($arg)*).red());
+        eprintln!("[ERROR] {}", format!($($arg)*).red());
     };
 }
 pub(crate) use error;

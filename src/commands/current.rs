@@ -1,5 +1,5 @@
 use super::RunnableCommand;
-use crate::{dalamud_version_manager::DalamudVersionManager, directories, logger::info};
+use crate::{dalamud_version_manager::DalamudVersionManager, fs::directories, logger::info};
 use anyhow::{anyhow, Result};
 use async_trait::async_trait;
 use clap::Parser;

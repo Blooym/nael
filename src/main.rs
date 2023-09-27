@@ -1,8 +1,9 @@
 #[forbid(unsafe_code)]
 mod commands;
 mod dalamud_version_manager;
-mod directories;
+mod fs;
 mod logger;
+mod net;
 mod repository;
 
 use self::commands::{Install, List, Remove, RunnableCommand, Update, Use};
@@ -48,7 +49,7 @@ async fn main() {
     let opts = Opts::parse();
 
     if let Err(err) = opts.cmd.run().await {
-        error!("Something went wrong during command execution: {}", err);
+        error!("{}", err);
         std::process::exit(1);
     }
 }
