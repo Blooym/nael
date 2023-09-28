@@ -1,43 +1,20 @@
-use crate::{fs::directories::get_versions_dir, logger::warning, repository::DistRepository};
+use crate::{
+    fs::{archive, directory::get_versions_dir, symlink},
+    logger::warning,
+    repository::DistRepository,
+};
 use anyhow::{anyhow, Context, Result};
-use indicatif::{ProgressBar, ProgressStyle};
 use std::{
-    fs::{self, File},
+    fs::{self},
     path,
-    time::Duration,
 };
 use tempfile::tempdir;
-use zip::ZipArchive;
-
-/// The template for the progress bar used when extracting the Dalamud archive.
-const EXTRACT_PROGRESS_BAR_TEMPLATE: &str = "[{elapsed_precise}] {spinner:.green} {msg}";
 
 /// A struct that contains logic for interacting with Dalamud versions.
 #[derive(Debug)]
 pub struct DalamudVersionManager {}
 
 impl DalamudVersionManager {
-    /// Extracts the given file to the given directory.
-    fn extract_file_with_progress(path: &path::PathBuf, extract_dir: &path::PathBuf) -> Result<()> {
-        // Create the progress bar.
-        let extract_progress_bar = ProgressBar::new_spinner();
-        extract_progress_bar.set_style(
-            ProgressStyle::default_spinner()
-                .template(EXTRACT_PROGRESS_BAR_TEMPLATE)
-                .unwrap()
-                .progress_chars("#>-"),
-        );
-        extract_progress_bar.set_message("Extracting archive...");
-        extract_progress_bar.enable_steady_tick(Duration::from_millis(100));
-
-        // Extract the archive.
-        let mut archive = ZipArchive::new(File::open(path)?)?;
-        archive.extract(extract_dir)?;
-        extract_progress_bar.finish_and_clear();
-
-        Ok(())
-    }
-
     /// Installs the given version of Dalamud to the versions directory.
     pub async fn create(branch: &str, replace_existing: bool) -> Result<()> {
         // Get relevant directories.
@@ -65,7 +42,7 @@ impl DalamudVersionManager {
         archive_url
             .download_with_progress(archive_path.clone())
             .await?;
-        Self::extract_file_with_progress(&archive_path, &extract_dir)?;
+        archive::extract_archive_with_progress(&archive_path, &extract_dir)?;
 
         let version_url = DistRepository::default().get_version_info_url(branch);
         if let Err(err) = version_url
@@ -132,7 +109,7 @@ impl DalamudVersionManager {
 
     /// Returns the currently active version of Dalamud.
     pub fn get_current() -> Result<Option<String>> {
-        let current_version_dir = crate::fs::directories::get_current_version_dir()
+        let current_version_dir = crate::fs::directory::get_current_version_dir()
             .context("Failed to get current version directory.")?;
 
         if !current_version_dir.exists() {
@@ -171,7 +148,7 @@ impl DalamudVersionManager {
         }
 
         // Remove the current version
-        let current_version_dir = crate::fs::directories::get_current_version_dir()
+        let current_version_dir = crate::fs::directory::get_current_version_dir()
             .context("Failed to get current version directory.")?;
         let _ = fs::remove_dir_all(&current_version_dir);
 
@@ -183,7 +160,7 @@ impl DalamudVersionManager {
 
     /// Unsets the currently active version of Dalamud.
     pub fn unset_current() -> Result<()> {
-        let current_version_dir = crate::fs::directories::get_current_version_dir()
+        let current_version_dir = crate::fs::directory::get_current_version_dir()
             .context("Failed to get current version directory.")?;
 
         if !current_version_dir.exists() {
