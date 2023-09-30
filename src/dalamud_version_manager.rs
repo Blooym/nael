@@ -10,6 +10,9 @@ use std::{
 };
 use tempfile::tempdir;
 
+const VERSION_FILE_NAME: &str = "_version";
+const ARCHIVE_FILE_NAME: &str = "dalamud.zip";
+
 /// A struct that contains logic for interacting with Dalamud versions.
 #[derive(Debug)]
 pub struct DalamudVersionManager {}
@@ -35,7 +38,7 @@ impl DalamudVersionManager {
 
         // Format the download URL and create a temporary directory to download to.
         let dir = tempdir()?;
-        let archive_path: path::PathBuf = dir.path().join("download.zip");
+        let archive_path: path::PathBuf = dir.path().join(ARCHIVE_FILE_NAME);
         let archive_url = DistRepository::default().get_download_url(branch);
 
         // Download & extract the archive.
@@ -46,7 +49,7 @@ impl DalamudVersionManager {
 
         let version_url = DistRepository::default().get_version_info_url(branch);
         if let Err(err) = version_url
-            .download_with_progress(extract_dir.join("version"))
+            .download_with_progress(extract_dir.join(VERSION_FILE_NAME))
             .await
         {
             warning!("Unable to obtain version information: {}\nThis may cause issues when trying to use the update command later.", err);
