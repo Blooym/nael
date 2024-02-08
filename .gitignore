@@ -1,5 +1,9 @@
+# Builds
 target/
-src-old/
+dist/
 
-.DS_Store
+# IDEs
 .vscode/
+
+# MacOS
+.DS_Store/
