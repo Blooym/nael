@@ -1,3 +1,5 @@
-/target
+target/
+src-old/
 
 .DS_Store
+.vscode/

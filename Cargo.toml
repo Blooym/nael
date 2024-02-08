@@ -4,6 +4,7 @@ authors = ["Blooym"]
 description = "Install and manage different installations of Dalamud quickly and easily."
 version = "0.1.1"
 license = "MIT OR Apache-2.0"
+rust-version = "1.75.0"
 edition = "2021"
 categories = ["command-line-utilities"]
 homepage = "https://github.com/Blooym/Nael"
@@ -11,31 +12,38 @@ repository = "https://github.com/Blooym/Nael"
 readme = "README.md"
 keywords = ["dalamud", "version-manager", "cli"]
 
+[workspace]
+members = ["crates/core"]
+
+[[bin]]
+name = "nael"
+path = "crates/cli/src/main.rs"
+
+[dependencies]
+nael_core = { path = "crates/core" }
+anyhow = "1.0.79"
+clap = { version = "4.4.18", features = ["derive"] }
+tokio = { version = "1.36.0", features = ["full"] }
+colored = "2.1.0"
+serde_json = "1.0.113"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+clone_on_ref_ptr = "warn"
+
 [profile.release]
 strip = true
+lto = true
 codegen-units = 1
 
 [profile.dist]
 inherits = "release"
 lto = true
 
-[dependencies]
-anyhow = "1.0.75"
-async-trait = "0.1.73"
-clap = { version = "4.4.5", features = ["derive"] }
-colored = "2.0.4"
-dirs = "5.0.1"
-indicatif = "0.17.7"
-reqwest = { version = "0.11.20", features = [
-    "rustls-tls",
-], default-features = false }
-symlink = "0.1.0"
-tempfile = "3.8.0"
-tokio = { version = "1.32.0", features = ["full"] }
-zip = "0.6.6"
-
 [workspace.metadata.dist]
-cargo-dist-version = "0.2.0"
+cargo-dist-version = "0.8.2"
 ci = ["github"]
 installers = []
 tap = "Blooym/Nael"
