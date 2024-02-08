@@ -86,10 +86,10 @@ async fn get_release_info_remote(args: &Info, state: &AppState) -> Result<()> {
 /// Output the given [`DalamudVersionInfo`] to stdout with pretty formatting.
 ///
 /// # Arguments:
-/// * `branch` - The name of the branch linked to the verison information.
+/// * `branch_name` - The name of the branch linked to the verison information.
 /// * `info` - The [`DalamudVersionInfo`] data to print.
 /// * `remote` - If this information was fetched from a remote source (e.g. from GitHub)
-fn pretty_print_version_info(branch: &str, info: DalamudVersionInfo, remote: bool) {
+fn pretty_print_version_info(branch_name: &str, info: DalamudVersionInfo, remote: bool) {
     let format = if remote {
         "Remote version information".yellow()
     } else {
@@ -106,7 +106,7 @@ fn pretty_print_version_info(branch: &str, info: DalamudVersionInfo, remote: boo
         - Runtime version: {}\n\
         - Runtime required: {}",
         format,
-        branch.bold(),
+        branch_name.bold(),
         info.assembly_version,
         info.git_sha.unwrap_or("unknown".to_owned()),
         info.revision.unwrap_or("unknown".to_owned()),

@@ -4,37 +4,40 @@ use anyhow::Result;
 use clap::Parser;
 use nael_core::dalamud::management::DalamudInstallation;
 
+const LIST_SYMBOL_ACTIVE: &str = "*";
+const LIST_SYMBOL_INACTIVE: &str = "-";
+
 /// List all installed branches of Dalamud.
 #[derive(Debug, Parser)]
 pub struct List;
 
 impl RunnableCommand for List {
     async fn run(&self, state: &AppState) -> Result<()> {
-        let Some(branches) = DalamudInstallation::get_all(&state.storage)? else {
-            println!("No Dalamud branches are currently installed.");
+        let Some(installations) = DalamudInstallation::get_all(&state.storage)? else {
+            println!("No branches are currently installed.");
             return Ok(());
         };
 
-        if branches.is_empty() {
-            println!("No Dalamud branches are currently installed.");
+        if installations.is_empty() {
+            println!("No branches are currently installed.");
             return Ok(());
         }
 
         let msg = format!(
-            "Installed Dalamud branches:\n{}",
-            branches
+            "Installed branches:\n{}",
+            installations
                 .iter()
                 .map(|v| {
                     if v.is_active().unwrap_or(false) {
-                        format!(" - {}", selected_value(&v.branch_name))
+                        format!(" {LIST_SYMBOL_ACTIVE} {}", selected_value(&v.branch_name))
                     } else {
-                        format!(" - {}", v.branch_name)
+                        format!(" {LIST_SYMBOL_INACTIVE} {}", v.branch_name)
                     }
                 })
                 .collect::<Vec<_>>()
                 .join("\n")
         );
-        println!("{}", msg);
+        println!("{msg}");
 
         Ok(())
     }
