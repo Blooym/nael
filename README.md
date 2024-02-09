@@ -61,7 +61,7 @@ Automatically find real path:
 export DALAMUD_HOME=$(nael active --empty-if-none --format symlink-path)
 ```
 
-If you cannot, or do not want to, call nael to get the path when setting an environment variable simply run `nael active --format symlink-path` and place the result in your environment configuration, as this will automatically point to the active version if one is set *(note: if no active version is set, this symlink will not exist or will lead to a dead path.)*
+If you cannot, or do not want to, call Nael to get the path when setting an environment variable simply run `nael active --format symlink-path` and place the result in your environment configuration, as this will automatically point to the active version if one is set *(note: if no active version is set, this symlink will not exist or will lead to a dead path.)*
 
 ### Integrating with C# Projects
 
