@@ -1,6 +1,6 @@
 [package]
 name = "nael"
-description = "Install and manage different branches of Dalamud with ease."
+description = "A Dalamud version manager that makes working with different releases of Dalamud simple."
 version = "0.2.0"
 authors = ["Blooym"]
 license = "MIT OR Apache-2.0"
@@ -42,6 +42,7 @@ codegen-units = 1
 [profile.dist]
 inherits = "release"
 lto = "thin"
+
 
 # Config for 'cargo dist'
 [workspace.metadata.dist]
