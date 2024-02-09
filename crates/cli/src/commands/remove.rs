@@ -4,7 +4,7 @@ use anyhow::{anyhow, Result};
 use clap::Parser;
 use nael_core::dalamud::management::DalamudInstallation;
 
-/// Remove a Dalamud branch from this system.
+/// Remove a branch from this system.
 #[derive(Debug, Parser)]
 pub struct Remove {
     /// The name of the branch to remove.

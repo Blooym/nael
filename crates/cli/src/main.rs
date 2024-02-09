@@ -20,12 +20,12 @@ struct AppState {
 #[derive(Debug, Parser)]
 enum NaelCommand {
     Install(Install),
-    Remove(Remove),
     Update(Update),
+    Remove(Remove),
     List(List),
-    Info(Info),
     Use(Use),
     Active(Active),
+    Info(Info),
 }
 
 impl RunnableCommand for NaelCommand {

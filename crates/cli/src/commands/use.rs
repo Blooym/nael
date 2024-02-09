@@ -5,7 +5,7 @@ use anyhow::{anyhow, Result};
 use clap::Parser;
 use nael_core::dalamud::management::DalamudInstallation;
 
-/// Switch the currently active Dalamud branch.
+/// Switch the currently active branch.
 #[derive(Debug, Parser)]
 pub struct Use {
     /// The branch name to use.
@@ -30,7 +30,7 @@ impl RunnableCommand for Use {
                 err
             ))
         } else {
-            println!("Successfully switched to branch '{}'.", &self.branch_name);
+            println!("Successfully set branch '{}' as active.", &self.branch_name);
             Ok(())
         }
     }

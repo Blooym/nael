@@ -47,7 +47,6 @@ fn get_release_info_local(args: &Info, state: &AppState) -> Result<()> {
         let Some(version_info) = installation.get_version_info_json()? else {
             return Err(anyhow!("No version information available for local branch"));
         };
-
         println!("{version_info}");
         Ok(())
     } else {

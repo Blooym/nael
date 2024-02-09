@@ -7,7 +7,7 @@ use nael_core::dalamud::management::DalamudInstallation;
 const LIST_SYMBOL_ACTIVE: &str = "*";
 const LIST_SYMBOL_INACTIVE: &str = "-";
 
-/// List all installed branches of Dalamud.
+/// List all installed branches.
 #[derive(Debug, Parser)]
 pub struct List;
 

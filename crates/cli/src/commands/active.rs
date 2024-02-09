@@ -23,17 +23,24 @@ impl std::fmt::Display for OutputFormat {
     }
 }
 
-/// Output information about the active Dalamud branch.
+/// Get information about the active branch.
 #[derive(Debug, Clone, Parser)]
 pub struct Active {
     /// The format used for outputting the active branch.
     #[clap(short = 'f', long = "format", default_value_t, value_enum)]
     format: OutputFormat,
+
+    /// Return an empty value with a successful exit code if no branch is set, useful for various tools.
+    #[clap(short = 'e', long = "empty-if-none", default_value_t = false)]
+    empty_if_none: bool,
 }
 
 impl RunnableCommand for Active {
     async fn run(&self, state: &AppState) -> Result<()> {
         let Some(active_installation) = DalamudInstallation::get_active(&state.storage)? else {
+            if self.empty_if_none {
+                return Ok(());
+            }
             return Err(anyhow!(
                 "No active branch set, or last active branch was removed improperly.\nTip: run '{}' to set an active branch.",
                 emphasis_text("nael use <branch>")

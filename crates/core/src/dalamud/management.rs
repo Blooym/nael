@@ -395,6 +395,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
     /// # Errors
     /// * When a network failure occurs fetching the remote version information.
     /// * When the returned version info is not valid JSON.
+    // FIXME: Remove the requirement on &self reference and AppStorage bound so this can be called without a local instance.
     pub async fn get_remote_version_info<RS: ReleaseSource>(
         &self,
         release_source: &RS,
@@ -455,6 +456,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
     /// This function will return an error in the following situations, but is not limited to just these cases:
     /// * When a network failure occurs fetching the remote version information.
     /// * When the returned version info is not valid JSON.
+    // FIXME: Remove the requirement on &self reference and AppStorage bound so this can be called without a local instance.
     pub async fn get_remote_version_info_json<RS: ReleaseSource>(
         &self,
         release_source: &RS,
