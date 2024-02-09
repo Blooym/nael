@@ -1,7 +1,7 @@
 [package]
 name = "nael"
 description = "Install and manage different branches of Dalamud with ease."
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Blooym"]
 license = "MIT OR Apache-2.0"
 rust-version = "1.75.0"
