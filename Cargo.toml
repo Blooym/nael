@@ -46,7 +46,6 @@ lto = "thin"
 
 # Config for 'cargo dist'
 [workspace.metadata.dist]
-allow-dirty = ["ci"] # Allow adding custom steps to release CI
 cargo-dist-version = "0.9.0"
 ci = ["github"]
 installers = []

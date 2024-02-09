@@ -6,7 +6,10 @@ version = "0.2.0"
 license = "MIT OR Apache-2.0"
 rust-version = "1.75.0"
 edition = "2021"
-publish = false
+homepage = "https://github.com/Blooym/Nael"
+repository = "https://github.com/Blooym/Nael"
+publish = true
+keywords = ["dalamud", "version-manager", "ffxiv"]
 
 [dependencies]
 zip = "0.6.6"
