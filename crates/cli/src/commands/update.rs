@@ -21,7 +21,7 @@ impl RunnableCommand for Update {
         let Some(installation) = DalamudInstallation::get(&self.branch_name, &state.storage)?
         else {
             return Err(anyhow!(
-                "Branch '{}' is not installed.\nTip: Run '{}' to try and install it.",
+                "Branch '{}' is not installed.\nTip: run '{}' to try and install it.",
                 self.branch_name,
                 emphasis_text(&format!("nael install {}", self.branch_name))
             ));
@@ -34,8 +34,7 @@ impl RunnableCommand for Update {
                 eprintln!(
                     "{}",
                     warning_text(&format!(
-                        "Warning: Failed to obtain version information: {:?}\n",
-                        err
+                        "Warning: Failed to obtain version information: {err:?}\n"
                     ))
                 );
                 None
@@ -44,15 +43,15 @@ impl RunnableCommand for Update {
 
         let Some(version_info) = version_info else {
             println!("No local information available for branch, skipping up-to-date check and performing update anyway...");
-            return match installation.update(&state.release_source).await {
-                Err(_) => Err(anyhow!("Failed to update branch '{}'", &self.branch_name,)),
-                Ok(_) => {
-                    println!(
-                        "Updated branch '{}' to the latest remote version.",
-                        self.branch_name
-                    );
-                    Ok(())
-                }
+            return if let Err(err) = installation.set_active() {
+                Err(anyhow!(
+                    "Failed to use switch to branch '{}': {}",
+                    &self.branch_name,
+                    err
+                ))
+            } else {
+                println!("Successfully switched to branch '{}'.", &self.branch_name);
+                Ok(())
             };
         };
 
@@ -67,15 +66,14 @@ impl RunnableCommand for Update {
             return Ok(());
         }
 
-        match installation.update(&state.release_source).await {
-            Err(_) => Err(anyhow!("Failed to update branch '{}'", &self.branch_name,)),
-            Ok(_) => {
-                println!(
-                    "Updated branch '{}' to the latest version.",
-                    self.branch_name
-                );
-                Ok(())
-            }
+        if installation.update(&state.release_source).await.is_err() {
+            return Err(anyhow!("Failed to update branch '{}'", &self.branch_name));
         }
+
+        println!(
+            "Updated branch '{}' to the latest version.",
+            self.branch_name
+        );
+        Ok(())
     }
 }

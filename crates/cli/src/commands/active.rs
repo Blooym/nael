@@ -19,7 +19,7 @@ enum OutputFormat {
 
 impl std::fmt::Display for OutputFormat {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{:?}", self)
+        write!(f, "{self:?}")
     }
 }
 
@@ -35,7 +35,7 @@ impl RunnableCommand for Active {
     async fn run(&self, state: &AppState) -> Result<()> {
         let Some(active_installation) = DalamudInstallation::get_active(&state.storage)? else {
             return Err(anyhow!(
-                "No active branch set, or last active branch was removed improperly.\nTip: Run '{}' to set an active branch.",
+                "No active branch set, or last active branch was removed improperly.\nTip: run '{}' to set an active branch.",
                 emphasis_text("nael use <branch>")
             ));
         };
@@ -53,7 +53,7 @@ impl RunnableCommand for Active {
                         .context("could not find active branch path")?
                         .to_str()
                         .context("could not convert path to string for output")?
-                )
+                );
             }
             OutputFormat::RealPath => {
                 println!(
@@ -63,7 +63,7 @@ impl RunnableCommand for Active {
                         .context("could not determine active branch location on disk")?
                         .to_str()
                         .context("could not parse location to str")?
-                )
+                );
             }
         };
 

@@ -37,7 +37,7 @@ impl RunnableCommand for Info {
 fn get_release_info_local(args: &Info, state: &AppState) -> Result<()> {
     let Some(installation) = DalamudInstallation::get(&args.branch_name, &state.storage)? else {
         return Err(anyhow!(
-            "The branch '{}' is not installed locally.\nTip: You can use the '{}' flag to see remote information instead.",
+            "The branch '{}' is not installed locally.\nTip: run can use the '{}' flag to see remote information instead.",
             args.branch_name,
             emphasis_text("--remote")
         ));
@@ -48,7 +48,7 @@ fn get_release_info_local(args: &Info, state: &AppState) -> Result<()> {
             return Err(anyhow!("No version information available for local branch"));
         };
 
-        println!("{}", version_info);
+        println!("{version_info}");
         Ok(())
     } else {
         let Some(version_info) = installation.get_version_info()? else {
@@ -90,7 +90,7 @@ async fn get_release_info_remote(args: &Info, state: &AppState) -> Result<()> {
 /// * `remote` - If this information was fetched from a remote source (e.g. from GitHub)
 fn pretty_print_version_info(branch_name: &str, info: DalamudVersionInfo, remote: bool) {
     let format = if remote {
-        "Remote version information".yellow()
+        "Remote version information".cyan()
     } else {
         "Local version information".green()
     };

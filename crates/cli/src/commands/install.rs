@@ -15,7 +15,7 @@ impl RunnableCommand for Install {
     async fn run(&self, state: &AppState) -> Result<()> {
         if DalamudInstallation::exists(&self.branch_name, &state.storage)? {
             return Err(anyhow!(
-                "Branch '{}' is already installed.\nTip: Run '{}' to update it.",
+                "Branch '{}' is already installed.\nTip: run '{}' to update it.",
                 self.branch_name,
                 emphasis_text(&format!("nael update {}", self.branch_name))
             ));

@@ -17,22 +17,21 @@ impl RunnableCommand for Use {
         let Some(installation) = DalamudInstallation::get(&self.branch_name, &state.storage)?
         else {
             return Err(anyhow!(
-                "Branch '{}' is not installed.\nTip: Run '{}' to install it.",
+                "Branch '{}' is not installed.\nTip: run '{}' to install it.",
                 self.branch_name,
                 emphasis_text(&format!("nael install {}", self.branch_name))
             ));
         };
 
-        match installation.set_active() {
-            Err(err) => Err(anyhow!(
+        if let Err(err) = installation.set_active() {
+            Err(anyhow!(
                 "Failed to use switch to branch '{}': {}",
                 &self.branch_name,
                 err
-            )),
-            Ok(_) => {
-                println!("Successfully switched to branch '{}'.", &self.branch_name);
-                Ok(())
-            }
+            ))
+        } else {
+            println!("Successfully switched to branch '{}'.", &self.branch_name);
+            Ok(())
         }
     }
 }
