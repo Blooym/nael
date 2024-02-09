@@ -1,5 +1,8 @@
 use super::RunnableCommand;
-use crate::{formatting::emphasis_text, AppState};
+use crate::{
+    formatting::{emphasis_text, warning_text},
+    AppState,
+};
 use anyhow::{anyhow, Result};
 use clap::Parser;
 use nael_core::dalamud::{
@@ -18,29 +21,37 @@ impl RunnableCommand for Update {
         let Some(installation) = DalamudInstallation::get(&self.branch_name, &state.storage)?
         else {
             return Err(anyhow!(
-                "Branch '{}' is not installed\nTip: Run '{}' to try and install it",
+                "Branch '{}' is not installed.\nTip: Run '{}' to try and install it.",
                 self.branch_name,
                 emphasis_text(&format!("nael install {}", self.branch_name))
             ));
         };
 
+        // Just update without version check if no local info is available.
         let Some(version_info) = installation.get_version_info().unwrap_or(None) else {
-            eprintln!("{} did not have version info so it could not be automatically checked to be the latest version", &self.branch_name);
+            eprintln!(
+                "{}",
+                warning_text(&format!(
+                    "Warning: {} does not have local version information, cannot perform up-to-date check.",
+                    &self.branch_name
+                ))
+            );
             installation.update(&state.release_source).await?;
             println!(
-                "Updated branch {} to the latest version available",
+                "Updated branch '{}' to the latest version.",
                 &self.branch_name
             );
             return Ok(());
         };
 
+        // Check if we're up to date with remote release source.
         let file = state
             .release_source
             .get_version_file_file(&self.branch_name);
         let remote_version_info = DalamudVersionInfo::from_remote_file(&file).await?;
 
         if version_info == remote_version_info {
-            println!("Already up to date.");
+            println!("Branch is already up to date.");
             return Ok(());
         }
 
@@ -51,7 +62,10 @@ impl RunnableCommand for Update {
                 e
             )),
             Ok(_) => {
-                println!("Successfully updated branch '{}'", self.branch_name);
+                println!(
+                    "Updated branch '{}' to the latest version.",
+                    self.branch_name
+                );
                 Ok(())
             }
         }

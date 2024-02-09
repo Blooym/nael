@@ -1,12 +1,12 @@
-// TODO: Module structure repeats itself a lot, maybe find a better place to put this stuff.
-
 use crate::net::RemoteResource;
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use std::{fmt::Debug, fs::read_to_string, path::Path, str::FromStr};
 
-// Note: https://kamori.goats.dev/Dalamud/Release/Meta exists and has caches of active Dalamud branches.
-// Right now this URL isn't being used, but it could be in the future to fetch releases in a better way.
+// Note: https://kamori.goats.dev/Dalamud/Release/Meta exists and has caches of Dalamud releases and is how
+// the official launchers perform updates.
+// Right now this URL isn't being used, but it could be in the future to fetch releases in a better way, so
+// it is being left as a note here.
 
 /// Version information for a Dalamud release.
 ///
@@ -21,8 +21,8 @@ use std::{fmt::Debug, fs::read_to_string, path::Path, str::FromStr};
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
 pub struct DalamudVersionInfo {
-    /// Depending on the branch, the assembly version will either be `major.minor.patch.revision` or a Git commit hash.
-    pub assembly_version: String,
+    /// Depending on the branch, the version will either be the assembly version `major.minor.patch.revision` or a Git commit hash.
+    pub version: String,
     /// The supported version of FFXIV for this Dalamud release.
     pub supported_game_ver: Option<String>,
     /// The .NET runtime version used for running this release.

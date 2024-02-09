@@ -13,7 +13,7 @@ enum OutputFormat {
     /// Output the real path to the active branch.
     RealPath,
 
-    /// Output the path to the symlink of the active branch.
+    /// Output the path to the symlink that points to the active branch.
     SymlinkPath,
 }
 
@@ -35,7 +35,7 @@ impl RunnableCommand for Active {
     async fn run(&self, state: &AppState) -> Result<()> {
         let Some(active_branch) = DalamudInstallation::get_active(&state.storage)? else {
             return Err(anyhow!(
-                "No active branch or last active branch was removed erroneously.\nTip: Run '{}' to set an active branch.",
+                "No active branch set, or last active branch was removed improperly.\nTip: Run '{}' to set an active branch.",
                 emphasis_text("nael use <branch>")
             ));
         };

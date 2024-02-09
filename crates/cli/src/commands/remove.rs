@@ -19,7 +19,7 @@ impl RunnableCommand for Remove {
         };
 
         installation.remove()?;
-        println!("Successfully removed the branch '{}'", self.branch_name);
+        println!("Successfully removed the branch '{}'.", self.branch_name);
         Ok(())
     }
 }

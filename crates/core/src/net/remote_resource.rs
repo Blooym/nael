@@ -10,12 +10,12 @@ pub struct RemoteResource {
 }
 
 impl RemoteResource {
-    /// Create a new [`RemoteFile`] from the given URL.
+    /// Create a new resource from the given URL.
     pub fn from_url(url: String) -> Self {
         Self { url }
     }
 
-    /// Read the entire contents of a [`RemoteFile`] to a [`String`].
+    /// Read the entire contents of the resource to a [`String`].
     ///
     /// # Errors
     /// This function will return an error in the following situations, but is not limited to just these cases:

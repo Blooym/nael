@@ -32,7 +32,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
         release_source: &RS,
     ) -> Result<DalamudInstallation<S>> {
         let branch_directory = storage.get_branch_directory(branch_name)?;
-        let version_info_path = storage.get_branch_version_info_file(branch_name)?;
+        let version_info_path = storage.get_branch_version_info_path(branch_name)?;
 
         // Download release archive.
         let work_dir = tempdir().context("creating temporary directory failed")?;
@@ -62,7 +62,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
         {
             eprintln!("Warning: Unable to obtain version information: {err}");
             eprintln!(
-                "This branch will not be able to do version checks against the remote release later"
+                "This branch will not be able to compare its version against the release source later."
             );
         };
 
@@ -91,16 +91,16 @@ impl<S: AppStorage> DalamudInstallation<S> {
             .context("failed to check if branch directory already exists")?
         {
             return Err(anyhow!(
-                "branch {} already exists in storage: use the update method to update it",
+                "branch {} already exists in storage: obtain an instance and call the update method on it instead",
                 branch_name,
             ));
         }
         Self::download_branch_impl(branch_name, storage, release_source).await
     }
 
-    /// Remove this branch installation from storage.
+    /// Remove the branch installation from storage.
     ///
-    /// If this version is set as the active version it will automatically be unset via [`DalamudInstallation::unset_active`].
+    /// If the branch installation is set as 'active' it will automatically be unset via [`DalamudInstallation::unset_active`].
     ///
     /// # Errors
     /// This function will return an error in the following situations, but is not limited to just these cases:
@@ -130,7 +130,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
         Ok(())
     }
 
-    /// Update this branch installation to the latest remote version, consuming this instance and returning a new when [`Ok`].
+    /// Update the branch installation to the latest remote version, consuming the instance and returning a new one when [`Ok`].
     ///
     /// # Errors
     /// This function will return an error in the following situations, but is not limited to just these cases:
@@ -139,20 +139,21 @@ impl<S: AppStorage> DalamudInstallation<S> {
     /// * When any part of the installation process fails.
     ///
     /// # Notes
-    /// This function consumes the original instance for safety.
-    /// If this operation returns an [`Err`] then the original installation files may no longer be present on disk which could
-    /// cause undesired behaviour with other operations.
+    /// This function consumes the calling instance for safety.
+    /// If this operation returns an [`Err`] then it is possible that the original installation files may no longer be present on disk.
+    /// This would cause undesired behaviour with other operations.
     ///
-    /// In cases where it is desired to reobtain the installation call [`DalamudInstallation::get`] as this will validate the install
-    /// is still valid before returning it.
+    /// In cases where it is desired to reobtain the installation call [`DalamudInstallation::get`]; This will validate the install
+    /// is still valid before passing back an instance that can be used again.
     ///
     /// # Recommendations
-    /// * Use [`DalamudInstallation::is_up_to_date`] to check if the installation actually needs to be updated before performing an update.
+    /// * Compare [`DalamudInstallation::get_version_info`] with [`DalamudInstallation::get_remote_version_info`] when available
+    /// to check if the installation actually needs to be updated before trying to update.
     pub async fn update<RS: ReleaseSource>(self, release_source: &RS) -> Result<Self> {
         Self::download_branch_impl(&self.branch_name, &self.storage, release_source).await
     }
 
-    /// Check a branch exists in the given storage.
+    /// Check a branch installation exists in the given storage.
     ///
     /// # Errors
     /// This function will return an error in the following situations, but is not limited to just these cases:
@@ -191,7 +192,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
         }))
     }
 
-    /// Get all installations inside of the given storage.
+    /// Get all installations in the given storage.
     ///
     /// # Errors
     /// This function will return an error in the following situations, but is not limited to just these cases:
@@ -268,7 +269,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
         }))
     }
 
-    /// Set this installation as active.
+    /// Set the branch installation as active by setting up the relevant storage symlinks.
     ///
     /// # Errors
     /// This function will return an error in the following situations, but is not limited to just these cases:
@@ -305,7 +306,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
         Ok(())
     }
 
-    /// Unsets the active version if one is set.
+    /// Unsets the active branch installation if one is set. When one is not set, the function will return [`Ok`] anyway.
     ///
     /// # Errors
     /// This function will return an error in the following situations, but is not limited to just these cases:
@@ -313,16 +314,16 @@ impl<S: AppStorage> DalamudInstallation<S> {
     /// * When unable to read the active version symlink for any reason other than [`std::io::ErrorKind::NotFound`].
     /// * When removing the active version symlink fails for any reason other than [`std::io::ErrorKind::NotFound`].
     pub fn unset_active(storage: &S) -> Result<()> {
-        let active_version_location = storage.get_active_branch_symlink()?;
+        let active_branch_symlink = storage.get_active_branch_symlink()?;
 
-        if let Err(err) = fs::read_link(&active_version_location) {
+        if let Err(err) = fs::read_link(&active_branch_symlink) {
             return match err.kind() {
                 std::io::ErrorKind::NotFound => Ok(()),
                 _ => Err(err.into()),
             };
         };
 
-        if let Err(err) = symlink::remove_symlink_dir(&active_version_location) {
+        if let Err(err) = symlink::remove_symlink_dir(&active_branch_symlink) {
             return match err.kind() {
                 std::io::ErrorKind::NotFound => Ok(()),
                 _ => Err(err.into()),
@@ -332,7 +333,9 @@ impl<S: AppStorage> DalamudInstallation<S> {
         Ok(())
     }
 
-    /// Check if this installation is set as active. Convinence function for checking 'self == [`DalamudInstallation::get_active`]'
+    /// Check if the branch installation is set as active.
+    ///
+    /// This is currently a convinence function for checking 'self == [`DalamudInstallation::get_active`]'.
     ///
     /// # Errors
     /// This function will return an error in the following situations, but is not limited to just these cases:
@@ -346,9 +349,9 @@ impl<S: AppStorage> DalamudInstallation<S> {
         Ok(self.branch_name == active.branch_name)
     }
 
-    /// Get the current storage directory for this installation. Will return [`None`] if the directory does not exist.
+    /// Get the directory for the branch installation. Will return [`None`] if the directory does not exist.
     ///
-    /// This is a mostly safety wrapper around [`AppStorage::get_branch_directory`].
+    /// This is a safety wrapper around [`AppStorage::get_branch_directory`].
     ///
     /// # Errors
     /// This function will return an error in the following situations, but is not limited to just these cases:
@@ -367,21 +370,22 @@ impl<S: AppStorage> DalamudInstallation<S> {
         Ok(Some(branch_directory))
     }
 
-    /// Get the version information for the branch installation by checking the storage to find version data
-    /// and serializing it.
+    /// Get the version information for the branch installation by checking the storage to find release version info
+    /// file.
     ///
     /// # Errors
     /// This function will return an error in the following situations, but is not limited to just these cases:
     /// * When any [`AppStorage`] operation fails.
     /// * When the returned version info is not valid JSON.
     pub fn get_version_info(&self) -> Result<Option<DalamudVersionInfo>> {
-        let version_info_path = self
-            .storage
-            .get_branch_version_info_file(&self.branch_name)?;
-        Ok(Some(DalamudVersionInfo::from_path_ref(&version_info_path)?))
+        Ok(Some(DalamudVersionInfo::from_path_ref(
+            &self
+                .storage
+                .get_branch_version_info_path(&self.branch_name)?,
+        )?))
     }
 
-    /// Get the remote version information for the branch installation by using the given source.
+    /// Get the remote version information for the branch installation using the given release source.
     ///
     /// # Errors
     /// * When a network failure occurs fetching the remote version information.
@@ -399,24 +403,27 @@ impl<S: AppStorage> DalamudInstallation<S> {
         ))
     }
 
-    /// Get the version information for the branch installation by checking the storage to find version data
-    /// and returning it as raw JSON.
+    /// Get the version information for the branch installation by checking the storage to find release version info
+    /// and returning it without serialization into [`DalamudVersionInfo`]
+    ///
+    /// # Notes
+    /// The [`String`] inside of [`Some`] is guaranteed to always be valid JSON as it is validated before being returned.
     ///
     /// # Errors
     /// This function will return an error in the following situations, but is not limited to just these cases:
     /// * When any [`AppStorage`] operation fails.
-    /// * When the returned version info is not valid JSON.
+    /// * When the returned version info string is not valid JSON.
     pub fn get_version_info_json(&self) -> Result<Option<String>> {
-        let path = self
+        let version_info_path = self
             .storage
-            .get_branch_version_info_file(&self.branch_name)?;
+            .get_branch_version_info_path(&self.branch_name)?;
 
-        if !path.try_exists()? {
+        if !version_info_path.try_exists()? {
             return Ok(None);
         }
 
-        let content = fs::read_to_string(&path)
-            .with_context(|| format!("reading {path:?} failed"))?
+        let content = fs::read_to_string(&version_info_path)
+            .with_context(|| format!("reading {version_info_path:?} failed"))?
             .trim()
             .to_owned();
 
@@ -430,7 +437,11 @@ impl<S: AppStorage> DalamudInstallation<S> {
         Ok(Some(content))
     }
 
-    /// Get the remote version information for the branch installation by using the given source.
+    /// Get the remote version information for the branch installation by using the given release source.
+    /// and returning it without serialization into [`DalamudVersionInfo`]
+    ///
+    /// # Notes
+    /// The [`String`] inside of [`Some`] is guaranteed to always be valid JSON as it is validated before being returned.
     ///
     /// # Errors
     /// This function will return an error in the following situations, but is not limited to just these cases:
@@ -439,7 +450,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
     pub async fn get_remote_version_info_json<RS: ReleaseSource>(
         &self,
         release_source: &RS,
-    ) -> Result<Option<DalamudVersionInfo>> {
+    ) -> Result<Option<String>> {
         let version_info_raw: String = release_source
             .get_version_file_file(&self.branch_name)
             .read_into_string()
@@ -448,12 +459,6 @@ impl<S: AppStorage> DalamudInstallation<S> {
         // Validate that the returned response is actually valid JSON.
         let _: IgnoredAny = serde_json::from_str(&version_info_raw)?;
 
-        Ok(Some(
-            release_source
-                .get_version_file_file(&self.branch_name)
-                .read_into_string()
-                .await?
-                .parse::<DalamudVersionInfo>()?,
-        ))
+        Ok(Some(version_info_raw))
     }
 }

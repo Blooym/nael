@@ -8,17 +8,17 @@ use nael_core::dalamud::{
 };
 use std::str::FromStr;
 
-/// Show information about the specified Dalamud branch.
+/// Show information about the specified branch.
 #[derive(Debug, Parser)]
 pub struct Info {
-    /// The branch name to show information for.
+    /// The name of the branch to show information for.
     branch_name: String,
 
-    /// Output the information formatted as JSON.
+    /// Output the information as JSON.
     #[clap(short = 'j', long = "json", default_value_t = false)]
     json: bool,
 
-    /// Output information about the remote branch instead of the locally installed one.
+    /// Output information about a remote branch instead of the local one.
     #[clap(short = 'r', long = "remote", default_value_t = false)]
     remote: bool,
 }
@@ -38,7 +38,7 @@ fn get_release_info_local(args: &Info, state: &AppState) -> Result<()> {
     // Get the local Dalamud installation.
     let Some(installation) = DalamudInstallation::get(&args.branch_name, &state.storage)? else {
         return Err(anyhow!(
-            "The branch '{}' is not installed locally\nTip: You can use the '{}' flag to see remote information instead",
+            "The branch '{}' is not installed locally.\nTip: You can use the '{}' flag to see remote information instead.",
             args.branch_name,
             emphasis_text("--remote")
         ));
@@ -98,7 +98,7 @@ fn pretty_print_version_info(branch_name: &str, info: DalamudVersionInfo, remote
 
     println!(
         "{} for branch {}:\n\
-        - Assembly version: {}\n\
+        - Version: {}\n\
         - Git Sha: {}\n\
         - Revision: {}\n\
         - Key: {}\n\
@@ -107,7 +107,7 @@ fn pretty_print_version_info(branch_name: &str, info: DalamudVersionInfo, remote
         - Runtime required: {}",
         format,
         branch_name.bold(),
-        info.assembly_version,
+        info.version,
         info.git_sha.unwrap_or("unknown".to_owned()),
         info.revision.unwrap_or("unknown".to_owned()),
         info.key.unwrap_or("N/A".to_owned()),

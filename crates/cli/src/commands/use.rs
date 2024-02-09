@@ -16,7 +16,7 @@ impl RunnableCommand for Use {
     async fn run(&self, state: &AppState) -> Result<()> {
         let Some(install) = DalamudInstallation::get(&self.branch_name, &state.storage)? else {
             return Err(anyhow!(
-                "Branch '{}' is not installed\nTip: Run '{}' to try and install it",
+                "Branch '{}' is not installed.\nTip: Run '{}' to try and install it.",
                 self.branch_name,
                 emphasis_text(&format!("nael install {}", self.branch_name))
             ));

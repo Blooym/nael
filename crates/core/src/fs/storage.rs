@@ -9,10 +9,10 @@ use std::{
 pub trait AppStorage: Clone {
     /// Get the raw local version info filename.
     ///
-    /// If you are using this for manually joining with the branch path consider using [`AppStorage::get_branch_versioninfo_location()`] instead.
+    /// If you are using this for manually joining with the branch path you should use [`AppStorage::get_branch_version_info_path()`] instead.
     fn get_version_info_filename(&self) -> &str;
 
-    /// Get a [`PathBuf`] to the symlink that links to the active version of Dalamud.
+    /// Get a [`PathBuf`] to the symlink that links to the active branch of Dalamud.
     ///
     /// This will automatically create all leading directories apart from the symlink.
     ///
@@ -22,7 +22,7 @@ pub trait AppStorage: Clone {
     /// * When creating any leading directory fails.
     fn get_active_branch_symlink(&self) -> Result<PathBuf>;
 
-    /// Get a [`PathBuf`] of the directory that contains installed versions of Dalamud.
+    /// Get a [`PathBuf`] of the directory that contains installed branches of Dalamud.
     ///
     /// This will automatically create all missing directories.
     ///
@@ -50,7 +50,7 @@ pub trait AppStorage: Clone {
     /// This function will return an error in the following situations, but is not limited to just these cases:
     /// * When there is no valid home directory found.
     /// * When creating any leading directory fails.
-    fn get_branch_version_info_file(&self, branch_name: &str) -> Result<PathBuf>;
+    fn get_branch_version_info_path(&self, branch_name: &str) -> Result<PathBuf>;
 }
 
 /// The name of the sub-directory that contains installed branches of Dalamud.
@@ -60,7 +60,7 @@ pub trait AppStorage: Clone {
 const DALAMUD_BRANCHES_DIRNAME: &str = "dalamud-branches";
 const DALAMUD_BRANCHES_DIRNAME_OLD: &str = "dalamud-versions"; // Temporary
 
-/// The name of the symlink to the active version of Dalamud
+/// The name of the symlink to the active branch of Dalamud
 //
 //  Warning:
 //  Any changes to this will break compatibility with existing installations.
@@ -154,7 +154,7 @@ impl AppStorage for CompliantDiskStorage {
         Ok(self.get_branches_directory()?.join(branch_name))
     }
 
-    fn get_branch_version_info_file(&self, branch_name: &str) -> Result<PathBuf> {
+    fn get_branch_version_info_path(&self, branch_name: &str) -> Result<PathBuf> {
         Ok(self
             .get_branches_directory()?
             .join(branch_name)

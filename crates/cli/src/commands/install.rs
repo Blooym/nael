@@ -7,7 +7,7 @@ use nael_core::dalamud::management::DalamudInstallation;
 /// Install a Dalamud release from the specified branch.
 #[derive(Debug, Parser)]
 pub struct Install {
-    /// The name of the branch to fetch the release from.
+    /// The name of the branch to install.
     branch_name: String,
 }
 
@@ -16,15 +16,15 @@ impl RunnableCommand for Install {
         match DalamudInstallation::create(&self.branch_name, &state.storage, &state.release_source)
             .await
         {
-            Ok(installation) => {
-                println!(
-                    "Successfully installed branch '{}' with Dalamud assembly version '{}'",
-                    &installation.branch_name,
-                    &installation
-                        .get_version_info()
-                        .unwrap_or(None)
-                        .map_or("unknown".to_owned(), |v| v.assembly_version),
-                );
+            Ok(branch) => {
+                if let Some(version_info) = branch.get_version_info()? {
+                    println!(
+                        "Successfully installed branch '{}' with version '{}'.",
+                        &branch.branch_name, &version_info.version
+                    );
+                } else {
+                    println!("Successfully installed branch '{}'", &branch.branch_name);
+                }
                 println!(
                     "Tip: run `{}` to select it as the active branch.",
                     emphasis_text(&format!("nael use {}", self.branch_name))
