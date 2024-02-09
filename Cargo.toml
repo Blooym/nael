@@ -43,7 +43,6 @@ codegen-units = 1
 inherits = "release"
 lto = "thin"
 
-
 # Config for 'cargo dist'
 [workspace.metadata.dist]
 cargo-dist-version = "0.9.0"
