@@ -35,23 +35,25 @@ impl<S: AppStorage> DalamudInstallation<S> {
         let version_info_path = storage.get_branch_version_info_path(branch_name)?;
 
         // Download release archive.
-        let work_dir = tempdir().context("creating temporary directory failed")?;
+        let work_dir = tempdir().context("creation temporary working directory failed")?;
         let download_path = work_dir.path().join("dalamud.zip");
         release_source
             .get_release_archive_file(branch_name)
             .download_with_progress_bar(&download_path)
-            .await?;
+            .await
+            .context("release archive download failure")?;
 
         // Extract release archive - delete existing install if found.
         if branch_directory
             .try_exists()
-            .context("failed to check if branch directory exists")?
+            .with_context(|| format!("unable to check existence of {branch_directory:?}"))?
         {
             fs::remove_dir_all(&branch_directory).with_context(|| {
                 format!("failed to delete existing branch directory {branch_directory:?}",)
             })?;
         }
-        archive::extract_with_progress_bar(&download_path, &branch_directory)?;
+        archive::extract_with_progress_bar(&download_path, &branch_directory)
+            .context("failed to extract release archive to disk")?;
         drop(work_dir); // Deletes the temporary directory.
 
         // Download version information.
@@ -60,7 +62,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
             .download_with_progress_bar(&version_info_path)
             .await
         {
-            eprintln!("Warning: Unable to obtain version information: {err}");
+            eprintln!("Warning: Unable to obtain version information: {err:?}");
             eprintln!(
                 "This branch will not be able to compare its version against the release source later."
             );
@@ -88,10 +90,10 @@ impl<S: AppStorage> DalamudInstallation<S> {
         let branch_directory = storage.get_branch_directory(branch_name)?;
         if branch_directory
             .try_exists()
-            .context("failed to check if branch directory already exists")?
+            .with_context(|| format!("unable to check existence of {branch_directory:?}"))?
         {
             return Err(anyhow!(
-                "branch {} already exists in storage: obtain an instance and call the update method on it instead",
+                "branch {} already exists in storage, obtain an instance and call the update method instead",
                 branch_name,
             ));
         }
@@ -109,7 +111,10 @@ impl<S: AppStorage> DalamudInstallation<S> {
     /// * When the branch directory cannot be found.
     pub fn remove(self) -> Result<()> {
         let branch_directory = self.storage.get_branch_directory(&self.branch_name)?;
-        if !branch_directory.try_exists()? {
+        if !branch_directory
+            .try_exists()
+            .with_context(|| format!("unable to check existence of {branch_directory:?}"))?
+        {
             return Err(anyhow!(
                 "unable to find branch {} in versions directory",
                 &self.branch_name
@@ -163,7 +168,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
         let branch_directory = storage.get_branch_directory(branch_name)?;
         if !branch_directory
             .try_exists()
-            .context("failed to check if branch directory exists")?
+            .with_context(|| format!("unable to check existence of {branch_directory:?}"))?
         {
             return Ok(false);
         }
@@ -181,7 +186,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
         let branch_directory = storage.get_branch_directory(branch_name)?;
         if !branch_directory
             .try_exists()
-            .context("failed to check if branch directory exists")?
+            .with_context(|| format!("unable to check existence of {branch_directory:?}"))?
         {
             return Ok(None);
         }
@@ -203,13 +208,13 @@ impl<S: AppStorage> DalamudInstallation<S> {
         let branch_directory = storage.get_branches_directory()?;
         if !branch_directory
             .try_exists()
-            .context("failed to check if branches directory exists")?
+            .with_context(|| format!("unable to check existence of {branch_directory:?}"))?
         {
             return Ok(None);
         }
 
         let versions = fs::read_dir(&branch_directory)
-            .context("failed to read branches directory")?
+            .with_context(|| format!("failed to read {branch_directory:?}"))?
             .filter_map(|entry| {
                 let path = entry.ok()?.path();
                 let file_name = path.file_name()?.to_str()?.to_owned();
@@ -281,7 +286,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
         let branch_directory = self.storage.get_branch_directory(&self.branch_name)?;
         if !branch_directory
             .try_exists()
-            .context("failed to check if branch directory exists")?
+            .with_context(|| format!("unable to check existence of {branch_directory:?}"))?
         {
             return Err(anyhow!(
                 "unable to find branch {} in versions directory",
@@ -362,7 +367,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
 
         if !branch_directory
             .try_exists()
-            .context("failed to check if the branch directory exists")?
+            .with_context(|| format!("unable to check existence of {branch_directory:?}"))?
         {
             return Ok(None);
         }
@@ -397,7 +402,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
         Ok(Some(
             release_source
                 .get_version_file_file(&self.branch_name)
-                .read_into_string()
+                .read_to_string()
                 .await?
                 .parse::<DalamudVersionInfo>()?,
         ))
@@ -418,12 +423,15 @@ impl<S: AppStorage> DalamudInstallation<S> {
             .storage
             .get_branch_version_info_path(&self.branch_name)?;
 
-        if !version_info_path.try_exists()? {
+        if !version_info_path
+            .try_exists()
+            .with_context(|| format!("unable to check existence of {version_info_path:?}"))?
+        {
             return Ok(None);
         }
 
         let content = fs::read_to_string(&version_info_path)
-            .with_context(|| format!("reading {version_info_path:?} failed"))?
+            .with_context(|| format!("could not read file at {version_info_path:?}"))?
             .trim()
             .to_owned();
 
@@ -453,7 +461,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
     ) -> Result<Option<String>> {
         let version_info_raw: String = release_source
             .get_version_file_file(&self.branch_name)
-            .read_into_string()
+            .read_to_string()
             .await?;
 
         // Validate that the returned response is actually valid JSON.

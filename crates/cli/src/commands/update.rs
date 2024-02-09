@@ -28,20 +28,32 @@ impl RunnableCommand for Update {
         };
 
         // Just update without version check if no local info is available.
-        let Some(version_info) = installation.get_version_info().unwrap_or(None) else {
-            eprintln!(
-                "{}",
-                warning_text(&format!(
-                    "Warning: {} does not have local version information, cannot perform up-to-date check.",
-                    &self.branch_name
-                ))
-            );
-            installation.update(&state.release_source).await?;
-            println!(
-                "Updated branch '{}' to the latest version.",
-                &self.branch_name
-            );
-            return Ok(());
+        let version_info = match installation.get_version_info() {
+            Ok(version_info) => version_info,
+            Err(err) => {
+                eprintln!(
+                    "{}",
+                    warning_text(&format!(
+                        "Warning: Failed to obtain version information: {:?}\n",
+                        err
+                    ))
+                );
+                None
+            }
+        };
+
+        let Some(version_info) = version_info else {
+            println!("No local information available for branch, skipping up-to-date check and performing update anyway...");
+            return match installation.update(&state.release_source).await {
+                Err(_) => Err(anyhow!("Failed to update branch '{}'", &self.branch_name,)),
+                Ok(_) => {
+                    println!(
+                        "Updated branch '{}' to the latest remote version.",
+                        self.branch_name
+                    );
+                    Ok(())
+                }
+            };
         };
 
         // Check if we're up to date with remote release source.
@@ -56,11 +68,7 @@ impl RunnableCommand for Update {
         }
 
         match installation.update(&state.release_source).await {
-            Err(e) => Err(anyhow!(
-                "Failed to update branch '{}': {}",
-                &self.branch_name,
-                e
-            )),
+            Err(_) => Err(anyhow!("Failed to update branch '{}'", &self.branch_name,)),
             Ok(_) => {
                 println!(
                     "Updated branch '{}' to the latest version.",

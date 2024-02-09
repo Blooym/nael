@@ -33,7 +33,7 @@ pub struct Active {
 
 impl RunnableCommand for Active {
     async fn run(&self, state: &AppState) -> Result<()> {
-        let Some(active_branch) = DalamudInstallation::get_active(&state.storage)? else {
+        let Some(active_installation) = DalamudInstallation::get_active(&state.storage)? else {
             return Err(anyhow!(
                 "No active branch set, or last active branch was removed improperly.\nTip: Run '{}' to set an active branch.",
                 emphasis_text("nael use <branch>")
@@ -42,7 +42,7 @@ impl RunnableCommand for Active {
 
         match self.format {
             OutputFormat::Name => {
-                println!("{}", active_branch.branch_name);
+                println!("{}", active_installation.branch_name);
             }
             OutputFormat::SymlinkPath => {
                 println!(
@@ -58,7 +58,7 @@ impl RunnableCommand for Active {
             OutputFormat::RealPath => {
                 println!(
                     "{}",
-                    active_branch
+                    active_installation
                         .get_location()?
                         .context("could not determine active branch location on disk")?
                         .to_str()

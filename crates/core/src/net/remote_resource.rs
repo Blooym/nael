@@ -20,7 +20,7 @@ impl RemoteResource {
     /// # Errors
     /// This function will return an error in the following situations, but is not limited to just these cases:
     /// * When a network request fails.
-    pub async fn read_into_string(&self) -> Result<String> {
+    pub async fn read_to_string(&self) -> Result<String> {
         let download = reqwest::get(&self.url)
             .await
             .with_context(|| format!("failed to read remote file at {}", self.url))?;
@@ -64,7 +64,7 @@ impl RemoteResource {
         let mut file =
             File::create(&path).with_context(|| format!("failed creating file {path:?}",))?;
 
-        while let Some(chunk) = download.chunk().await? {
+        while let Some(chunk) = download.chunk().await.context("failed to chunk download")? {
             file.write_all(&chunk)
                 .context("writing chunk to disk failed")?;
             download_progress_bar.inc(chunk.len() as u64);

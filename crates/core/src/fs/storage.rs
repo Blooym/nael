@@ -156,8 +156,7 @@ impl AppStorage for CompliantDiskStorage {
 
     fn get_branch_version_info_path(&self, branch_name: &str) -> Result<PathBuf> {
         Ok(self
-            .get_branches_directory()?
-            .join(branch_name)
+            .get_branch_directory(branch_name)?
             .join(self.get_version_info_filename()))
     }
 }

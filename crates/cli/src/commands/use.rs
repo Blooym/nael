@@ -14,19 +14,20 @@ pub struct Use {
 
 impl RunnableCommand for Use {
     async fn run(&self, state: &AppState) -> Result<()> {
-        let Some(install) = DalamudInstallation::get(&self.branch_name, &state.storage)? else {
+        let Some(installation) = DalamudInstallation::get(&self.branch_name, &state.storage)?
+        else {
             return Err(anyhow!(
-                "Branch '{}' is not installed.\nTip: Run '{}' to try and install it.",
+                "Branch '{}' is not installed.\nTip: Run '{}' to install it.",
                 self.branch_name,
                 emphasis_text(&format!("nael install {}", self.branch_name))
             ));
         };
 
-        match install.set_active() {
-            Err(e) => Err(anyhow!(
+        match installation.set_active() {
+            Err(err) => Err(anyhow!(
                 "Failed to use switch to branch '{}': {}",
                 &self.branch_name,
-                e
+                err
             )),
             Ok(_) => {
                 println!("Successfully switched to branch '{}'.", &self.branch_name);

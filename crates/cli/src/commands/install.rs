@@ -13,17 +13,28 @@ pub struct Install {
 
 impl RunnableCommand for Install {
     async fn run(&self, state: &AppState) -> Result<()> {
+        if DalamudInstallation::exists(&self.branch_name, &state.storage)? {
+            return Err(anyhow!(
+                "Branch '{}' is already installed.\nTip: Run '{}' to update it.",
+                self.branch_name,
+                emphasis_text(&format!("nael update {}", self.branch_name))
+            ));
+        }
+
         match DalamudInstallation::create(&self.branch_name, &state.storage, &state.release_source)
             .await
         {
-            Ok(branch) => {
-                if let Some(version_info) = branch.get_version_info()? {
+            Ok(installation) => {
+                if let Some(version_info) = installation.get_version_info()? {
                     println!(
                         "Successfully installed branch '{}' with version '{}'.",
-                        &branch.branch_name, &version_info.version
+                        &installation.branch_name, &version_info.assembly_version
                     );
                 } else {
-                    println!("Successfully installed branch '{}'", &branch.branch_name);
+                    println!(
+                        "Successfully installed branch '{}'",
+                        &installation.branch_name
+                    );
                 }
                 println!(
                     "Tip: run `{}` to select it as the active branch.",
@@ -31,10 +42,9 @@ impl RunnableCommand for Install {
                 );
                 Ok(())
             }
-            Err(e) => Err(anyhow!(
-                "Failed to install the branch '{}': {}",
-                self.branch_name,
-                e
+            Err(_) => Err(anyhow!(
+                "Failed to install the branch '{}'",
+                self.branch_name
             )),
         }
     }

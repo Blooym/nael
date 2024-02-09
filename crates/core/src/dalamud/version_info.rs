@@ -21,8 +21,9 @@ use std::{fmt::Debug, fs::read_to_string, path::Path, str::FromStr};
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
 pub struct DalamudVersionInfo {
-    /// Depending on the branch, the version will either be the assembly version `major.minor.patch.revision` or a Git commit hash.
-    pub version: String,
+    /// Depending on the branch, this will either be the assembly version `major.minor.patch.revision` or a Git commit hash.
+    /// Somewhat confusing, this field is named 'assembly_version' remotely anyway.
+    pub assembly_version: String,
     /// The supported version of FFXIV for this Dalamud release.
     pub supported_game_ver: Option<String>,
     /// The .NET runtime version used for running this release.
@@ -52,11 +53,10 @@ impl DalamudVersionInfo {
     /// * When a failure occurs reading the file at the given path.
     /// * When serialization fails.
     pub fn from_path_ref<P: AsRef<Path> + Debug>(path: &P) -> Result<Self> {
-        let content =
-            read_to_string(path).with_context(|| format!("reading file at {path:?} failed"))?;
-        content
+        read_to_string(path)
+            .with_context(|| format!("failed read file at {path:?}"))?
             .parse::<Self>()
-            .with_context(|| format!("cannot deserialize file {path:?}"))
+            .with_context(|| format!("unable to deserialize file at {path:?}"))
     }
 
     /// Get the version info from the [`RemoteFile`] and parse it into [`DalamudVersionInfo`].
@@ -66,9 +66,9 @@ impl DalamudVersionInfo {
     /// * When any network failure occurs.
     /// * When serialization fails.
     pub async fn from_remote_file(file: &RemoteResource) -> Result<Self> {
-        file.read_into_string()
-            .await
-            .with_context(|| format!("cannot deserialize remote file {file:?}"))?
+        file.read_to_string()
+            .await?
             .parse::<Self>()
+            .with_context(|| format!("unable to deserialize resource at {}", file.url))
     }
 }
