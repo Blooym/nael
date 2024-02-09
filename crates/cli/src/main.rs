@@ -6,7 +6,7 @@ use crate::formatting::error_text;
 use anyhow::Result;
 use clap::Parser;
 use nael_core::{dalamud::sources::GoatcorpReleaseSource, fs::storage::CompliantDiskStorage};
-use std::sync::Arc;
+use std::{process::ExitCode, sync::Arc};
 
 const APP_QUALIFIER: &str = "dev";
 const APP_ORGANIZATION: &str = "Blooym";
@@ -50,7 +50,7 @@ struct Opts {
 }
 
 #[tokio::main]
-async fn main() {
+async fn main() -> ExitCode {
     let opts = Opts::parse();
 
     if let Err(err) = opts
@@ -66,6 +66,7 @@ async fn main() {
         .await
     {
         eprintln!("{}: {:?}", error_text("Error"), err);
-        std::process::exit(1);
+        return ExitCode::from(1);
     };
+    ExitCode::SUCCESS
 }
