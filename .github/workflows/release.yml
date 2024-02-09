@@ -262,3 +262,25 @@ jobs:
           body: ${{ fromJson(needs.host.outputs.val).announcement_github_body }}
           prerelease: ${{ fromJson(needs.host.outputs.val).announcement_is_prerelease }}
           artifacts: "artifacts/*"
+
+  # Custom-added until cargo-dist supports it natively.
+  publish-crate:
+    needs: [announce]
+    runs-on: ubuntu-latest
+    env:
+      CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Rust Toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          cache: true
+
+      - name: Publish crate
+        run: |
+          cargo login ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          cargo publish
