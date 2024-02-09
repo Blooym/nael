@@ -3,7 +3,7 @@
 > [!WARNING]  
 > Nael is not yet considered stable and is subject to breaking changes. If you're using it in CI or scripts it you should pin to a specific version to avoid breakage. This includes both the `nael_core` crate and the `nael` binary.
 
-A Dalamud version manager that makes working with different releases (branches) of Dalamud simple, inspired by [nvm](https://github.com/nvm-sh/nvm).
+A [Dalamud](https://github.com/goatcorp/Dalamud) version manager that makes working with different releases (branches) of Dalamud simple, inspired by [nvm](https://github.com/nvm-sh/nvm).
 
 ## Features
 - Quick installs and updates from official release distribution source.
@@ -42,30 +42,41 @@ Nael is not available from any package manager at this time.
 
 </details>
 
-## Integrating with Dalamud C# Projects.
+## Setting up DALAMUD_HOME with Nael
 
 > [!NOTE]  
 > Testing is required here. PRs are welcome to help improve this section!
 
-To integrate Nael with Dalamud C# projects, such as plugins, do the following:
+`DALAMUD_HOME` is the [community-accepted](https://github.com/goatcorp/SamplePlugin/blob/c1dacec1e1f56ac798a9ffd5703f6101b8aa054e/SamplePlugin/Dalamud.Plugin.Bootstrap.targets) environment variable for setting a custom Dalamud installation path for most projects within the ecosystem and works as an override to the default paths projects have set.
 
-1. Install and set a branch as active by running `nael install <branch>` followed by `nael use <branch>`.
+Setting an environment variable depends on the shell you're using, for most POSIX-compliant shells it will be along the lines of adding the following to your shell configuration:
 
-2. 
-   - **If your solution works with Symlinks**: set the `$DALAMUD_HOME` environment variable to point to the symlink of the active branch. You can achieve this by setting the environment variable to point to the return value of `nael active --empty-if-none --format symlink-path` (note: the path will be empty if no branch is active).
-   - **If your solution does not work with Symlinks** set the `$DALAMUD_HOME` environment variable to point to the absolute path of the active branch. You can achieve this by setting the environment variable to point to the return value of `nael active --empty-if-none --format real-path` (note: the path will be empty if no branch is active).
+Automatically find symlink path:
+```sh
+export DALAMUD_HOME=$(nael active --empty-if-none --format symlink-path)
+```
 
-3. Add the following to your `.csproj` file, replacing any existing definitions of the `DalamudLibPath` property.
-    ```xml
-    <PropertyGroup>
-      <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
-      <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('Linux'))">$(HOME)/.xlcore/dalamud/Hooks/dev/</DalamudLibPath>
-      <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(HOME)/Library/Application Support/XIV on Mac/dalamud/Hooks/dev/</DalamudLibPath>
-      <DalamudLibPath Condition="$(DALAMUD_HOME) != ''">$(DALAMUD_HOME)/</DalamudLibPath>
-    </PropertyGroup>
-    ```
+Automatically find real path:
+```sh
+export DALAMUD_HOME=$(nael active --empty-if-none --format symlink-path)
+```
 
-This will enable you to use the `DALAMUD_HOME` environment variable to override the default DalamudLibPath and use Nael to manage your Dalamud version instead while still maintaining compatibility for other users who want to build your project.
+If you cannot, or do not want to, call nael to get the path when setting an environment variable simply run `nael active --format symlink-path` and place the result in your environment configuration, as this will automatically point to the active version if one is set *(note: if no active version is set, this symlink will not exist or will lead to a dead path.)*
+
+### Integrating with C# Projects
+
+Add the following to your `.csproj` or `.targets` file, replacing any existing definitions of `DalamudLibPath` property.
+
+```xml
+<PropertyGroup>
+  <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('Windows'))">$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+  <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('Linux'))">$(HOME)/.xlcore/dalamud/Hooks/dev/</DalamudLibPath>
+  <DalamudLibPath Condition="$([MSBuild]::IsOSPlatform('OSX'))">$(HOME)/Library/Application Support/XIV on Mac/dalamud/Hooks/dev/</DalamudLibPath>
+  <DalamudLibPath Condition="$(DALAMUD_HOME) != ''">$(DALAMUD_HOME)/</DalamudLibPath>
+</PropertyGroup>
+```
+
+You will now be able to use the `DALAMUD_HOME` environment variable to override the default DalamudLibPath and use Nael to manage your Dalamud version instead - if `DALAMUD_HOME` isn't set the per-platform paths will be used instead.
 
 ## Examples
 
