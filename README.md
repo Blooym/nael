@@ -7,7 +7,9 @@
 
 A [Dalamud](https://github.com/goatcorp/Dalamud) version manager that makes working with different releases (branches) of Dalamud simple, inspired by [nvm](https://github.com/nvm-sh/nvm).
 
+
 ## Features
+
 - Quick installs and updates from official release distribution source.
 - Instant switching between multiple locally-installed branches.
 - Able to check version information from a remote source to only update when out of date.
@@ -16,6 +18,7 @@ A [Dalamud](https://github.com/goatcorp/Dalamud) version manager that makes work
 - All functionality implemented through a project-agnostic crate.
 
 Check the [examples](#examples) section to see Nael in use. 
+
 
 ## Installing
 
