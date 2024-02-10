@@ -21,8 +21,7 @@ Check the [examples](#examples) section to see Nael in use.
 
 ## Installing
 
-<details>
-<Summary>With Cargo</summary>
+### With Cargo
 
 You can get Nael from Crates.io using Cargo, to do so simply run:
 
@@ -30,21 +29,13 @@ You can get Nael from Crates.io using Cargo, to do so simply run:
 cargo install nael
 ```
 
-</details>
-
-<details>
-<Summary>From a prebuilt binary</summary>
+### From a prebuilt binary
 
 Pre-built binaries are currently available for `Windows x64`, `Linux x64`, `macOS Apple Silicon` and `macOS Intel`. Head to the [GitHub releases page](https://github.com/Blooym/Nael/releases) and download the right release asset for your machine add place it somewhere in your system `$PATH`.
 
-</details>
-
-<details>
-<Summary>From a package manager</summary>
+### From a package manager
 
 Nael is not available from any package manager at this time.
-
-</details>
 
 ## Setting up DALAMUD_HOME with Nael
 
