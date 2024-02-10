@@ -303,9 +303,17 @@ impl<S: AppStorage> DalamudInstallation<S> {
             }
         };
         symlink::symlink_dir(&branch_directory, &active_version_location).with_context(|| {
-            format!(
+            if cfg!(windows) {
+                // Output a windows-specific error message prompting about developer mode as symlinks are considered a developer/priviledged
+                // action. https://security.stackexchange.com/questions/10194/why-do-you-have-to-be-an-admin-to-create-a-symlink-in-windows
+                format!(
+                "failed to create symlink from {branch_directory:?} to {active_version_location:?} (have you enabled Windows Developer Mode or run as an administrator?)"
+            )
+            } else {
+                format!(
                 "failed to create symlink from {branch_directory:?} to {active_version_location:?}"
             )
+            }
         })?;
 
         Ok(())
