@@ -7,7 +7,6 @@
 
 A [Dalamud](https://github.com/goatcorp/Dalamud) version manager that makes working with different releases (branches) of Dalamud simple, inspired by [nvm](https://github.com/nvm-sh/nvm).
 
-
 ## Features
 
 - **Quick installs and updates** from release distribution sources.
@@ -21,6 +20,9 @@ A [Dalamud](https://github.com/goatcorp/Dalamud) version manager that makes work
 Check the [examples](#examples) section to see some examples of usage. 
 
 ## Installing
+
+> [!IMPORTANT]  
+> **WINDOWS USERS** will have to enable [Developer Mode](https://learn.microsoft.com/en-us/windows/apps/get-started/developer-mode-features-and-debugging) in order to use Nael outside of an administrator context due to Windows preventing the creation of symlinks without it enabled.
 
 ### Cargo (best platform support; recommended)
 
