@@ -57,7 +57,7 @@ Setting an environment variable depends on the shell you're using, for most POSI
 
 Automatically find symlink path:
 ```sh
-export DALAMUD_HOME=$(nael symlink_path)
+export DALAMUD_HOME=$(nael symlink-path)
 ```
 
 Automatically find real path:
