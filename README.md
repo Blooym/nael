@@ -10,14 +10,15 @@ A [Dalamud](https://github.com/goatcorp/Dalamud) version manager that makes work
 
 ## Features
 
-- Quick installs and updates from official release distribution source.
-- Instant switching between multiple locally-installed branches.
-- Able to check version information from a remote source to only update when out of date.
-- Compliant with all major operating system storage standards.
-- No configuration files, everything is completely filesystem based.
-- All functionality implemented through a project-agnostic crate.
+- **Quick installs and updates** from release distribution sources.
+- **Instant switching** between multiple locally-installed branches.
+- **Update checks** from a remote source to only run an update when out of date.
+- **Compliant** with all major operating system storage standards.
+- **No configuration** files, everything is completely filesystem based.
+- **Implemented safely** with a project-agnostic crate.
+- **Cross-platform** and able to run on most major operating systems.
 
-Check the [examples](#examples) section to see Nael in use. 
+Check the [examples](#examples) section to see some examples of usage. 
 
 ## Installing
 
@@ -25,7 +26,7 @@ Check the [examples](#examples) section to see Nael in use.
 
 The best way to install is by using Cargo to fetch it from crates.io and compile it for your machine. For some architectures (e.g. aarch64) this is currently the only way to install Nael.
 
-Once you have Cargo setup locally, simply run the following to download and compile for your system
+Once you have [Cargo setup locally](https://www.rust-lang.org/tools/install), simply run the following to download and compile for your system:
 
 ```
 cargo install nael
