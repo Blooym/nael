@@ -5,6 +5,7 @@ use self::commands::{Active, Info, Install, List, Remove, RunnableCommand, Updat
 use crate::formatting::error_text;
 use anyhow::Result;
 use clap::Parser;
+use commands::SymlinkPath;
 use nael_core::{dalamud::sources::GoatcorpReleaseSource, fs::storage::CompliantDiskStorage};
 use std::{process::ExitCode, sync::Arc};
 
@@ -25,6 +26,7 @@ enum NaelCommand {
     List(List),
     Use(Use),
     Active(Active),
+    SymlinkPath(SymlinkPath),
     Info(Info),
 }
 
@@ -38,6 +40,7 @@ impl RunnableCommand for NaelCommand {
             NaelCommand::Info(cmd) => cmd.run(state).await,
             NaelCommand::Use(cmd) => cmd.run(state).await,
             NaelCommand::Active(cmd) => cmd.run(state).await,
+            NaelCommand::SymlinkPath(cmd) => cmd.run(state).await,
         }
     }
 }

@@ -15,7 +15,7 @@ keywords = ["dalamud", "version-manager", "ffxiv"]
 zip = "0.6.6"
 anyhow = { version = "1.0.79", features = ["backtrace"] }
 directories = "5.0.1"
-indicatif = "0.17.7"
+indicatif = "0.17.8"
 reqwest = { version = "0.11.24", features = [
     "rustls-tls",
 ], default_features = false }

@@ -3,12 +3,13 @@ mod info;
 mod install;
 mod list;
 mod remove;
+mod symlink_path;
 mod update;
 mod r#use;
 
 pub use {
     active::Active, info::Info, install::Install, list::List, r#use::Use, remove::Remove,
-    update::Update,
+    symlink_path::SymlinkPath, update::Update,
 };
 
 use crate::AppState;

@@ -1,9 +1,9 @@
 # Nael
 
-*You're looking at the README for `nael` the command-line tool. If you're looking for the`nael_core` library, please go [here](./crates/core/).*
-
 > [!WARNING]  
 > Nael is not yet considered stable and is subject to breaking changes. If you're using it in CI or scripts it you should pin to a specific version to avoid breakage. This includes both the `nael_core` crate and the `nael` binary.
+
+*You're looking at the README for `nael` the command-line tool. If you're looking for the`nael_core` library, please go [here](./crates/core/).*
 
 A [Dalamud](https://github.com/goatcorp/Dalamud) version manager that makes working with different releases (branches) of Dalamud simple, inspired by [nvm](https://github.com/nvm-sh/nvm).
 
@@ -18,7 +18,6 @@ A [Dalamud](https://github.com/goatcorp/Dalamud) version manager that makes work
 - All functionality implemented through a project-agnostic crate.
 
 Check the [examples](#examples) section to see Nael in use. 
-
 
 ## Installing
 
@@ -58,15 +57,15 @@ Setting an environment variable depends on the shell you're using, for most POSI
 
 Automatically find symlink path:
 ```sh
-export DALAMUD_HOME=$(nael active --empty-if-none --format symlink-path)
+export DALAMUD_HOME=$(nael symlink_path)
 ```
 
 Automatically find real path:
 ```sh
-export DALAMUD_HOME=$(nael active --empty-if-none --format symlink-path)
+export DALAMUD_HOME=$(nael active --empty-if-none --format path)
 ```
 
-If you cannot, or do not want to, call Nael to get the path when setting an environment variable simply run `nael active --format symlink-path` and place the result in your environment configuration, as this will automatically point to the active version if one is set *(note: if no active version is set, this symlink will not exist or will lead to a dead path.)*
+If you cannot, or do not want to, call Nael to get the path when setting an environment variable simply run `nael symlink-path` and place the command output in your environment configuration. The symlink returned from this command will always point to the active version if one is set *(note: if no active version is set, this symlink will not exist or will lead to a dead path.)*
 
 ### Integrating with C# Projects
 
@@ -93,14 +92,15 @@ A Dalamud version manager that makes working with different releases of Dalamud 
 Usage: nael <COMMAND>
 
 Commands:
-  install  Install a Dalamud release from the specified branch
-  update   Update a local branch to the latest version
-  remove   Remove a branch from this system
-  list     List all installed branches
-  use      Switch the currently active branch
-  active   Get information about the active branch
-  info     Show information about the specified branch
-  help     Print this message or the help of the given subcommand(s)
+  install       Install a Dalamud release from the specified branch
+  update        Update a local branch to the latest version
+  remove        Remove a branch from this system
+  list          List all installed branches
+  use           Switch the currently active branch
+  active        Get information about the active branch
+  symlink-path  Get the path to the symlink that always points to the active branch
+  info          Show information about the specified branch
+  help          Print this message or the help of the given subcommand(s)
 
 Options:
   -h, --help     Print help
@@ -138,9 +138,7 @@ Installed branches:
 ```
 > nael active
 latest
-> nael active --format symlink-path
-/home/example/.config/nael/active
-> nael active --format real-path
+> nael active --format path
 /home/example/.local/share/nael/dalamud-branches/latest
 ```
 

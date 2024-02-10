@@ -2,7 +2,7 @@ use super::RunnableCommand;
 use crate::{formatting::emphasis_text, AppState};
 use anyhow::{anyhow, Context, Result};
 use clap::{Parser, ValueEnum};
-use nael_core::{dalamud::management::DalamudInstallation, fs::storage::AppStorage};
+use nael_core::dalamud::management::DalamudInstallation;
 
 #[derive(Debug, Default, Clone, ValueEnum)]
 enum OutputFormat {
@@ -10,11 +10,8 @@ enum OutputFormat {
     #[default]
     Name,
 
-    /// Output the real path to the active branch.
-    RealPath,
-
-    /// Output the path to the symlink that points to the active branch.
-    SymlinkPath,
+    /// Output the path to the active branch.
+    Path,
 }
 
 impl std::fmt::Display for OutputFormat {
@@ -51,18 +48,7 @@ impl RunnableCommand for Active {
             OutputFormat::Name => {
                 println!("{}", active_installation.branch_name);
             }
-            OutputFormat::SymlinkPath => {
-                println!(
-                    "{}",
-                    state
-                        .storage
-                        .get_active_branch_symlink()
-                        .context("could not find active branch path")?
-                        .to_str()
-                        .context("could not convert path to string for output")?
-                );
-            }
-            OutputFormat::RealPath => {
+            OutputFormat::Path => {
                 println!(
                     "{}",
                     active_installation
