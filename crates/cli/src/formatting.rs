@@ -13,5 +13,5 @@ pub fn warning_text(s: &str) -> ColoredString {
 }
 
 pub fn error_text(s: &str) -> ColoredString {
-    s.red()
+    s.bright_red().bold()
 }

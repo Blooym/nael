@@ -9,6 +9,9 @@ use commands::SymlinkPath;
 use nael_core::{dalamud::sources::GoatcorpReleaseSource, fs::storage::CompliantDiskStorage};
 use std::{process::ExitCode, sync::Arc};
 
+#[cfg(target_os = "windows")]
+use colored::control;
+
 const APP_QUALIFIER: &str = "dev";
 const APP_ORGANIZATION: &str = "Blooym";
 const APP_NAME: &str = "Nael";
@@ -54,6 +57,9 @@ struct Opts {
 
 #[tokio::main]
 async fn main() -> ExitCode {
+    #[cfg(target_os = "windows")]
+    control::set_virtual_terminal(true).expect("Failed to set virtual terminal");
+
     let opts = Opts::parse();
 
     if let Err(err) = opts
@@ -68,7 +74,7 @@ async fn main() -> ExitCode {
         })
         .await
     {
-        eprintln!("{}: {:?}", error_text("Error"), err);
+        eprintln!("{}: {:?}", error_text("error"), err);
         return ExitCode::from(1);
     };
     ExitCode::SUCCESS
