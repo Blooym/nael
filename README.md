@@ -21,19 +21,21 @@ Check the [examples](#examples) section to see Nael in use.
 
 ## Installing
 
-### With Cargo
+### Cargo (best platform support; recommended)
 
-You can get Nael from Crates.io using Cargo, to do so simply run:
+The best way to install is by using Cargo to fetch it from crates.io and compile it for your machine. For some architectures (e.g. aarch64) this is currently the only way to install Nael.
+
+Once you have Cargo setup locally, simply run the following to download and compile for your system
 
 ```
 cargo install nael
 ```
 
-### From a prebuilt binary
+### Prebuilt binaries
 
-Pre-built binaries are currently available for `Windows x64`, `Linux x64`, `macOS Apple Silicon` and `macOS Intel`. Head to the [GitHub releases page](https://github.com/Blooym/Nael/releases) and download the right release asset for your machine add place it somewhere in your system `$PATH`.
+Pre-built binaries are available for all targets that `cargo-dist` can support and are built using the latest versions of Rust. To download one for your system, go to the [GitHub releases page](https://github.com/Blooym/Nael/releases/latest) and download the right release asset for your architecture and operating system add place it somewhere in your system `$PATH`.
 
-### From a package manager
+### Other package managers
 
 Nael is not available from any package manager at this time.
 
@@ -42,21 +44,15 @@ Nael is not available from any package manager at this time.
 > [!NOTE]  
 > Testing is required here. PRs are welcome to help improve this section!
 
-`DALAMUD_HOME` is the [community-accepted](https://github.com/goatcorp/SamplePlugin/blob/c1dacec1e1f56ac798a9ffd5703f6101b8aa054e/SamplePlugin/Dalamud.Plugin.Bootstrap.targets) environment variable for setting a custom Dalamud installation path for most projects within the ecosystem and works as an override to the default paths projects have set.
+`DALAMUD_HOME` is the [community-accepted](https://github.com/goatcorp/SamplePlugin/blob/c1dacec1e1f56ac798a9ffd5703f6101b8aa054e/SamplePlugin/Dalamud.Plugin.Bootstrap.targets) environment variable for setting a custom Dalamud path.
 
-Setting an environment variable depends on the shell you're using, for most POSIX-compliant shells it will be along the lines of adding the following to your shell configuration:
+Setting an environment variable depends on the shell you're using. For most POSIX-compliant shells you should be able to just add the following to your shell configuration:
 
-Automatically find symlink path:
 ```sh
 export DALAMUD_HOME=$(nael symlink-path)
 ```
 
-Automatically find real path:
-```sh
-export DALAMUD_HOME=$(nael active --empty-if-none --format path)
-```
-
-If you cannot, or do not want to, call Nael to get the path when setting an environment variable simply run `nael symlink-path` and place the command output in your environment configuration. The symlink returned from this command will always point to the active version if one is set *(note: if no active version is set, this symlink will not exist or will lead to a dead path.)*
+If you cannot, or do not want to, call Nael to get the path when setting the environment variable you can run `nael symlink-path` and place the command output in your environment configuration instead. The symlink returned from this command will always point to the active version if one is set *(note: if no active version is set, this symlink will not exist or will lead to a dead path.)*.
 
 ### Integrating with C# Projects
 
