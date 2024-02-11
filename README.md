@@ -1,7 +1,7 @@
 # Nael
 
 > [!WARNING]  
-> Nael is not yet considered stable and is subject to breaking changes. If you're using it in CI or scripts it you should pin to a specific version to avoid breakage. This includes both the `nael_core` crate and the `nael` binary.
+> Nael is not yet considered stable and is subject to breaking changes. If you're using it in CI or scripts you should pin to a specific version to avoid breakage. This includes both the `nael_core` crate and the `nael` binary.
 
 *You're looking at the README for `nael` the command-line tool. If you're looking for the`nael_core` library, please go [here](./crates/core/).*
 
