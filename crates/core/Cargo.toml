@@ -2,7 +2,7 @@
 name = "nael_core"
 authors = ["Blooym"]
 description = "Internals for managing different installations of Dalamud."
-version = "0.2.1"
+version = "0.3.0"
 license = "MIT OR Apache-2.0"
 rust-version = "1.75.0"
 edition = "2021"
