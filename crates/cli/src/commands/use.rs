@@ -3,7 +3,7 @@ use crate::{formatting::emphasis_text, AppState};
 use super::RunnableCommand;
 use anyhow::{anyhow, Result};
 use clap::Parser;
-use nael_core::dalamud::management::DalamudInstallation;
+use nael_core::dalamud::DalamudInstallation;
 
 /// Switch the currently active branch.
 #[derive(Debug, Parser)]

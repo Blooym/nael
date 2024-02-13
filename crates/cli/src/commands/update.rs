@@ -5,7 +5,7 @@ use crate::{
 };
 use anyhow::{anyhow, Result};
 use clap::Parser;
-use nael_core::{dalamud::management::DalamudInstallation, fs::storage::AppStorage};
+use nael_core::{dalamud::DalamudInstallation, fs::storage::AppStorage};
 
 /// Update a local branch to the latest version.
 #[derive(Debug, Parser)]

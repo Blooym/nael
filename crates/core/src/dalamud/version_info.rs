@@ -59,7 +59,7 @@ impl DalamudVersionInfo {
             .with_context(|| format!("unable to deserialize file at {path:?}"))
     }
 
-    /// Get the version info from the [`RemoteFile`] and parse it into [`DalamudVersionInfo`].
+    /// Get the version info from the [`RemoteResource`] and parse it into [`DalamudVersionInfo`].
     ///
     /// # Errors
     /// This function will return an error in the following situations, but is not limited to just these cases:

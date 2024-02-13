@@ -58,7 +58,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
 
         // Download version information.
         if let Err(err) = release_source
-            .get_version_file_file(branch_name)
+            .get_version_info_file(branch_name)
             .download_with_progress_bar(&version_info_path)
             .await
         {
@@ -410,7 +410,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
     ) -> Result<Option<DalamudVersionInfo>> {
         Ok(Some(
             release_source
-                .get_version_file_file(&self.branch_name)
+                .get_version_info_file(&self.branch_name)
                 .read_to_string()
                 .await?
                 .parse::<DalamudVersionInfo>()?,
@@ -470,7 +470,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
         release_source: &RS,
     ) -> Result<Option<String>> {
         let version_info_raw: String = release_source
-            .get_version_file_file(&self.branch_name)
+            .get_version_info_file(&self.branch_name)
             .read_to_string()
             .await?;
 

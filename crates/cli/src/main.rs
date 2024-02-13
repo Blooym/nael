@@ -6,7 +6,7 @@ use crate::formatting::error_text;
 use anyhow::Result;
 use clap::Parser;
 use commands::SymlinkPath;
-use nael_core::{dalamud::sources::GoatcorpReleaseSource, fs::storage::CompliantDiskStorage};
+use nael_core::{dalamud::GoatcorpReleaseSource, fs::storage::CompliantDiskStorage};
 use std::{process::ExitCode, sync::Arc};
 
 #[cfg(target_os = "windows")]

@@ -2,7 +2,7 @@ use super::RunnableCommand;
 use crate::AppState;
 use anyhow::{anyhow, Result};
 use clap::Parser;
-use nael_core::dalamud::management::DalamudInstallation;
+use nael_core::dalamud::DalamudInstallation;
 
 /// Remove a branch from this system.
 #[derive(Debug, Parser)]

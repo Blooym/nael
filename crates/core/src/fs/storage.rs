@@ -61,13 +61,11 @@ const DALAMUD_BRANCHES_DIRNAME: &str = "dalamud-branches";
 const DALAMUD_BRANCHES_DIRNAME_OLD: &str = "dalamud-versions"; // Temporary
 
 /// The name of the symlink to the active branch of Dalamud
-//
 //  Warning:
 //  Any changes to this will break compatibility with existing installations.
 const ACTIVE_DALAMUD_VERSION_DIRNAME: &str = "active";
 
-/// The name of the version info file contained inside of every release that has one available.
-//
+/// The name of the version info file contained inside of every release locally that has one available.
 //  Warning:
 //  Any changes to this will break compatibility with existing installations.
 const VERSIONINFO_FILENAME: &str = "release.versiondata";

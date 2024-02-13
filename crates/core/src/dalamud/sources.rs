@@ -3,7 +3,7 @@ use crate::net::RemoteResource;
 /// An implementation that enables locating Dalamud release assets.
 pub trait ReleaseSource {
     fn get_release_archive_file(&self, branch: &str) -> RemoteResource;
-    fn get_version_file_file(&self, branch: &str) -> RemoteResource;
+    fn get_version_info_file(&self, branch: &str) -> RemoteResource;
 }
 
 /// The name of the branch at the root of the repository.
@@ -41,7 +41,7 @@ impl ReleaseSource for GoatcorpReleaseSource {
     }
 
     /// Get the [`RemoteResource`] for the given Dalamud branch version info file.
-    fn get_version_file_file(&self, branch: &str) -> RemoteResource {
+    fn get_version_info_file(&self, branch: &str) -> RemoteResource {
         if branch == OFFICIAL_ROOT_BRANCH_NAME {
             RemoteResource::from_url(format!(
                 "{OFFICIAL_DOWNLOAD_BASE_URL}/{OFFICIAL_VERSION_INFO_FILENAME}"

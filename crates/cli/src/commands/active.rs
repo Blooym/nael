@@ -2,7 +2,7 @@ use super::RunnableCommand;
 use crate::{formatting::emphasis_text, AppState};
 use anyhow::{anyhow, Context, Result};
 use clap::{Parser, ValueEnum};
-use nael_core::dalamud::management::DalamudInstallation;
+use nael_core::dalamud::DalamudInstallation;
 
 #[derive(Debug, Default, Clone, ValueEnum)]
 enum OutputFormat {

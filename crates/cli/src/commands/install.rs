@@ -2,7 +2,7 @@ use super::RunnableCommand;
 use crate::{formatting::emphasis_text, AppState};
 use anyhow::{anyhow, Result};
 use clap::Parser;
-use nael_core::dalamud::management::DalamudInstallation;
+use nael_core::dalamud::DalamudInstallation;
 
 /// Install a Dalamud release from the specified branch.
 #[derive(Debug, Parser)]

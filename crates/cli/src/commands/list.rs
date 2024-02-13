@@ -2,7 +2,7 @@ use super::RunnableCommand;
 use crate::{formatting::selected_value, AppState};
 use anyhow::Result;
 use clap::Parser;
-use nael_core::dalamud::management::DalamudInstallation;
+use nael_core::dalamud::DalamudInstallation;
 
 const LIST_SYMBOL_ACTIVE: &str = "*";
 const LIST_SYMBOL_INACTIVE: &str = "-";

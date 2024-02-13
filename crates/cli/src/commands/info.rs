@@ -3,9 +3,7 @@ use crate::{formatting::emphasis_text, AppState};
 use anyhow::{anyhow, Result};
 use clap::Parser;
 use colored::Colorize;
-use nael_core::dalamud::{
-    management::DalamudInstallation, sources::ReleaseSource, version_info::DalamudVersionInfo,
-};
+use nael_core::dalamud::{DalamudInstallation, DalamudVersionInfo, ReleaseSource};
 use std::str::FromStr;
 
 /// Show information about the specified branch.
@@ -63,7 +61,7 @@ fn get_release_info_local(args: &Info, state: &AppState) -> Result<()> {
 async fn get_release_info_remote(args: &Info, state: &AppState) -> Result<()> {
     let raw_release_info: String = state
         .release_source
-        .get_version_file_file(&args.branch_name)
+        .get_version_info_file(&args.branch_name)
         .read_to_string()
         .await?;
 
