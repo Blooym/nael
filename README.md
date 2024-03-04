@@ -57,7 +57,7 @@ export DALAMUD_HOME=$(nael symlink-path)
 
 If you cannot, or do not want to, call Nael to get the path when setting the environment variable you can run `nael symlink-path` and place the command output in your environment configuration instead. The symlink returned from this command will always point to the active version if one is set *(note: if no active version is set, this symlink will not exist or will lead to a dead path.)*.
 
-### Integrating with C# Projects
+### Integrating with MSBuild
 
 Add the following to your `.csproj` or `.targets` file, replacing any existing definitions of `DalamudLibPath` property.
 
