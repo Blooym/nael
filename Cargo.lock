@@ -776,7 +776,7 @@ dependencies = [
 
 [[package]]
 name = "nael"
-version = "0.5.0"
+version = "0.4.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -787,7 +787,7 @@ dependencies = [
 
 [[package]]
 name = "nael_core"
-version = "0.4.0"
+version = "0.3.0"
 dependencies = [
  "anyhow",
  "directories",
