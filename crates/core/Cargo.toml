@@ -2,7 +2,7 @@
 name = "nael_core"
 authors = ["Blooym"]
 description = "Internals for managing different installations of Dalamud."
-version = "0.3.0"
+version = "0.4.0"
 license = "MIT OR Apache-2.0"
 rust-version = "1.75.0"
 edition = "2021"
@@ -13,16 +13,16 @@ keywords = ["dalamud", "version-manager", "ffxiv"]
 
 [dependencies]
 zip = "0.6.6"
-anyhow = { version = "1.0.79", features = ["backtrace"] }
+anyhow = { version = "1.0.80", features = ["backtrace"] }
 directories = "5.0.1"
 indicatif = "0.17.8"
 reqwest = { version = "0.11.24", features = [
     "rustls-tls",
 ], default_features = false }
-serde = { version = "1.0.196", features = ["derive"] }
-serde_json = "1.0.113"
+serde = { version = "1.0.197", features = ["derive"] }
+serde_json = "1.0.114"
 symlink = "0.1.0"
-tempfile = "3.10.0"
+tempfile = "3.10.1"
 
 [lints.rust]
 unsafe_code = "forbid"
