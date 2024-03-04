@@ -97,22 +97,22 @@ Options:
   -V, --version  Print version
 ```
 
-**Installing a Dalamud release from the `latest` branch:**
+**Installing a Dalamud release from the `release` branch:**
 ```
-> nael install latest
-Successfully installed branch 'latest' with version '9.0.0.17'.
+> nael install release
+Successfully installed branch 'release' with version '9.0.0.17'.
 ```
 
-**Updating the `latest` branch**
+**Updating the `release` branch**
 ```
-> nael update latest
+> nael update release
 Branch is already up to date.
 ```
 
-**Setting the active branch to `latest`:**
+**Setting the active branch to `release`:**
 ```
-> nael use latest
-Successfully set branch 'latest' as active.
+> nael use release
+Successfully set branch 'release' as active.
 ```
 
 **Listing all installed branches**
@@ -121,22 +121,22 @@ Successfully set branch 'latest' as active.
 Installed branches:
  - stg
  - v9
- * latest
+ * release
 ```
 
 **Getting information about the active version:**
 ```
 > nael active
-latest
+release
 > nael active --format path
-/home/example/.local/share/nael/dalamud-branches/latest
+/home/example/.local/share/nael/dalamud-branches/release
 ```
 
-**Getting local information about the `latest` branch:**   
+**Getting local information about the `release` branch:**   
 Optionally, see remote information instead with the `--remote` flag.
 ```
-> nael info latest
-Local version information for branch latest:
+> nael info release
+Local version information for branch release:
 - Version: 9.0.0.17
 - Git Sha: unknown
 - Revision: unknown
