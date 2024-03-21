@@ -74,7 +74,9 @@ async fn get_release_info_remote(args: &Info, state: &AppState) -> Result<()> {
                 pretty_print_version_info(&args.branch_name, data, true);
                 Ok(())
             }
-            Err(_) => Err(anyhow!("could not get remote version information")),
+            Err(_) => Err(anyhow!(
+                "could not get remote version information for the specified branch (does it exist?)"
+            )),
         }
     }
 }
