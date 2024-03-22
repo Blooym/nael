@@ -22,11 +22,11 @@ Check the [examples](#examples) section to see some examples of usage.
 ## Installing
 
 > [!IMPORTANT]  
-> **WINDOWS USERS** will have to enable [Developer Mode](https://learn.microsoft.com/en-us/windows/apps/get-started/developer-mode-features-and-debugging) in order to use Nael outside of an administrator context due to Windows preventing the creation of symlinks without it enabled.
+> **WINDOWS USERS** will have to enable [Developer Mode](https://learn.microsoft.com/en-us/windows/apps/get-started/developer-mode-features-and-debugging) in order to use nael outside of an administrator context due to Windows preventing the creation of symlinks without it enabled.
 
 ### Cargo (best platform support; recommended)
 
-The best way to install is by using Cargo to fetch it from crates.io and compile it for your machine. For some architectures (e.g. aarch64) this is currently the only way to install Nael.
+The best way to install is by using Cargo to fetch it from crates.io and compile it for your machine. For some architectures (e.g. aarch64) this is currently the only way to install nael.
 
 Once you have [Cargo setup locally](https://www.rust-lang.org/tools/install), simply run the following to download and compile for your system:
 
@@ -36,13 +36,13 @@ cargo install nael
 
 ### Prebuilt binaries
 
-Pre-built binaries are available for all targets that `cargo-dist` can support and are built using the latest versions of Rust. To download one for your system, go to the [GitHub releases page](https://github.com/Blooym/Nael/releases/latest) and download the right release asset for your architecture and operating system add place it somewhere in your system `$PATH`.
+Pre-built binaries are available for all targets that `cargo-dist` can support and are built using the latest versions of Rust. To download one for your system, go to the [GitHub releases page](https://github.com/Blooym/nael/releases/latest) and download the right release asset for your architecture and operating system add place it somewhere in your system `$PATH`.
 
 ### Other package managers
 
 Nael is not available from any package manager at this time.
 
-## Setting up DALAMUD_HOME with Nael
+## Setting up DALAMUD_HOME with nael
 
 > [!NOTE]  
 > Testing is required here. PRs are welcome to help improve this section!
@@ -55,7 +55,7 @@ Setting an environment variable depends on the shell you're using. For most POSI
 export DALAMUD_HOME=$(nael symlink-path)
 ```
 
-If you cannot, or do not want to, call Nael to get the path when setting the environment variable you can run `nael symlink-path` and place the command output in your environment configuration instead. The symlink returned from this command will always point to the active version if one is set *(note: if no active version is set, this symlink will not exist or will lead to a dead path.)*.
+If you cannot, or do not want to, call nael to get the path when setting the environment variable you can run `nael symlink-path` and place the command output in your environment configuration instead. The symlink returned from this command will always point to the active version if one is set *(note: if no active version is set, this symlink will not exist or will lead to a dead path.)*.
 
 ### Integrating with MSBuild
 
@@ -70,7 +70,7 @@ Add the following to your `.csproj` or `.targets` file, replacing any existing d
 </PropertyGroup>
 ```
 
-You will now be able to use the `DALAMUD_HOME` environment variable to override the default DalamudLibPath and use Nael to manage your Dalamud version instead - if `DALAMUD_HOME` isn't set the per-platform paths will be used instead.
+You will now be able to use the `DALAMUD_HOME` environment variable to override the default DalamudLibPath and use nael to manage your Dalamud version instead - if `DALAMUD_HOME` isn't set the per-platform paths will be used instead.
 
 ## Examples
 

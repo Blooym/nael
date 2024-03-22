@@ -7,8 +7,7 @@ license = "MIT OR Apache-2.0"
 rust-version = "1.75.0"
 edition = "2021"
 categories = ["command-line-utilities"]
-homepage = "https://github.com/Blooym/Nael"
-repository = "https://github.com/Blooym/Nael"
+repository = "https://github.com/Blooym/nael"
 publish = true
 keywords = ["dalamud", "version-manager", "cli", "ffxiv"]
 

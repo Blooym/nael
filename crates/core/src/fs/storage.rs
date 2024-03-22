@@ -5,7 +5,7 @@ use std::{
     path::PathBuf,
 };
 
-/// A storage implemenation that Nael uses to manage its state and data.
+/// A storage implemenation that nael uses to manage its state and data.
 pub trait AppStorage: Clone {
     /// Get the raw local version info filename.
     ///
