@@ -1,7 +1,7 @@
 [package]
 name = "nael"
 description = "A Dalamud version manager that makes working with different releases of Dalamud simple."
-version = "0.4.1"
+version = "0.4.2"
 authors = ["Blooym"]
 license = "MIT OR Apache-2.0"
 rust-version = "1.75.0"
@@ -19,10 +19,10 @@ name = "nael"
 path = "crates/cli/src/main.rs"
 
 [dependencies]
-nael_core = { version = "0.4.1", path = "crates/core" }
-anyhow = "1.0.81"
-clap = { version = "4.5.3", features = ["derive"] }
-tokio = { version = "1.36.0", features = ["full"] }
+nael_core = { version = "0.4.2", path = "crates/core" }
+anyhow = "1.0.89"
+clap = { version = "4.5.18", features = ["derive"] }
+tokio = { version = "1.40.0", features = ["full"] }
 colored = "2.1.0"
 
 [lints.rust]
@@ -44,9 +44,9 @@ lto = "thin"
 # Config for 'cargo dist'
 [workspace.metadata.dist]
 # The preferred cargo-dist version to use in CI (Cargo.toml SemVer syntax)
-cargo-dist-version = "0.11.1"
+cargo-dist-version = "0.22.1"
 # CI backends to support
-ci = ["github"]
+ci = "github"
 # The installers to generate for each app
 installers = []
 # Target platforms to build apps for (Rust target-triple syntax)
@@ -57,5 +57,5 @@ targets = [
     "x86_64-unknown-linux-musl",
     "x86_64-pc-windows-msvc",
 ]
-# Publish jobs to run in CI
+# Which actions to run on pull requests
 pr-run-mode = "skip"

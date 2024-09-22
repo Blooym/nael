@@ -153,7 +153,7 @@ impl<S: AppStorage> DalamudInstallation<S> {
     ///
     /// # Recommendations
     /// * Compare [`DalamudInstallation::get_version_info`] with [`DalamudInstallation::get_remote_version_info`] when available
-    /// to check if the installation actually needs to be updated before trying to update.
+    ///   to check if the installation actually needs to be updated before trying to update.
     pub async fn update<RS: ReleaseSource>(self, release_source: &RS) -> Result<Self> {
         Self::download_branch_impl(&self.branch_name, &self.storage, release_source).await
     }
