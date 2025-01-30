@@ -1,74 +1,36 @@
 use super::RunnableCommand;
-use crate::{
-    formatting::{emphasis_text, warning_text},
-    AppState,
-};
+use crate::{formatting::warning_text, AppState};
 use anyhow::{anyhow, Result};
 use clap::Parser;
 use nael_core::{dalamud::DalamudInstallation, fs::storage::AppStorage};
 
-/// Update a local branch to the latest version.
+/// Update all local branches to the latest version.
 #[derive(Debug, Parser)]
-pub struct Update {
-    /// The branch to install from.
-    branch_name: String,
+pub struct UpdateAll;
 
-    /// Forcefully update regardless of the current local or remote version information.
-    #[clap(
-        short = 'f',
-        long = "force",
-        default_value_t = false,
-        conflicts_with = "check"
-    )]
-    force: bool,
-
-    /// Do not automatically apply updates, only check for them.
-    #[clap(
-        short = 'c',
-        long = "check",
-        default_value_t = false,
-        conflicts_with = "force"
-    )]
-    check: bool,
-}
-
-impl RunnableCommand for Update {
+impl RunnableCommand for UpdateAll {
     async fn run(&self, state: &AppState) -> Result<()> {
-        let Some(installation) = DalamudInstallation::get(&self.branch_name, &state.storage)?
-        else {
-            return Err(anyhow!(
-                "Branch '{}' is not installed.\nTip: run '{}' to try and install it.",
-                self.branch_name,
-                emphasis_text(&format!("nael install {}", self.branch_name))
-            ));
+        let Some(installations) = DalamudInstallation::get_all(&state.storage)? else {
+            return Err(anyhow!("No dalamud installations detected."));
         };
 
-        // Handle check for update.
-        if self.check {
-            if is_up_to_date(&installation, state).await {
-                println!("Branch is up to date.")
-            } else {
-                println!("Branch is out of date.");
+        let mut has_updated = false;
+        for install in installations {
+            if is_up_to_date(&install, state).await {
+                continue;
             }
-            return Ok(());
+
+            update_branch(&install.branch_name, install.clone(), state).await?;
+            println!("Updated {} successfully", &install.branch_name);
+            has_updated = true;
         }
 
-        // Handle forceful update.
-        if self.force {
-            println!(
-                "Forcefully updating branch '{}' to latest version.",
-                &self.branch_name
-            );
-            return update_branch(&self.branch_name, installation, state).await;
+        if has_updated {
+            println!("One or more installations were successfully updated");
+        } else {
+            println!("All installations are up to date.")
         }
-
-        // Handle regular update.
-        if is_up_to_date(&installation, state).await {
-            println!("Branch is already up to date.");
-            return Ok(());
-        }
-
-        update_branch(&self.branch_name, installation, state).await
+        return Ok(());
     }
 }
 

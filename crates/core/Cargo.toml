@@ -16,19 +16,19 @@ rustls-tls = ["reqwest/rustls-tls"]
 native-tls = ["reqwest/native-tls"]
 
 [dependencies]
-zip = "2.2.0"
-anyhow = { version = "1.0.89", features = ["backtrace"] }
-directories = "5.0.1"
-indicatif = "0.17.8"
-reqwest = { version = "0.12.7", features = [
+zip = "2.2.2"
+anyhow = { version = "1.0.95", features = ["backtrace"] }
+directories = "6.0.0"
+indicatif = "0.17.11"
+reqwest = { version = "0.12.12", features = [
     "charset",
     "macos-system-configuration",
     "http2",
 ], default-features = false }
-serde = { version = "1.0.210", features = ["derive"] }
-serde_json = "1.0.128"
+serde = { version = "1.0.217", features = ["derive"] }
+serde_json = "1.0.138"
 symlink = "0.1.0"
-tempfile = "3.12.0"
+tempfile = "3.16.0"
 
 [lints.rust]
 unsafe_code = "forbid"

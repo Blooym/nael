@@ -20,10 +20,10 @@ path = "crates/cli/src/main.rs"
 
 [dependencies]
 nael_core = { version = "0.4.2", path = "crates/core" }
-anyhow = "1.0.89"
-clap = { version = "4.5.18", features = ["derive"] }
-tokio = { version = "1.40.0", features = ["full"] }
-colored = "2.1.0"
+anyhow = "1.0.95"
+clap = { version = "4.5.27", features = ["derive"] }
+tokio = { version = "1.43.0", features = ["full"] }
+colored = "3.0.0"
 
 [lints.rust]
 unsafe_code = "forbid"

@@ -5,7 +5,7 @@ use self::commands::{Active, Info, Install, List, Remove, RunnableCommand, Updat
 use crate::formatting::error_text;
 use anyhow::Result;
 use clap::Parser;
-use commands::SymlinkPath;
+use commands::{SymlinkPath, UpdateAll};
 use nael_core::{dalamud::GoatcorpReleaseSource, fs::storage::CompliantDiskStorage};
 use std::{process::ExitCode, sync::Arc};
 
@@ -25,6 +25,7 @@ struct AppState {
 enum NaelCommand {
     Install(Install),
     Update(Update),
+    UpdateAll(UpdateAll),
     Remove(Remove),
     List(List),
     Use(Use),
@@ -39,6 +40,7 @@ impl RunnableCommand for NaelCommand {
             NaelCommand::Install(cmd) => cmd.run(state).await,
             NaelCommand::Remove(cmd) => cmd.run(state).await,
             NaelCommand::Update(cmd) => cmd.run(state).await,
+            NaelCommand::UpdateAll(cmd) => cmd.run(state).await,
             NaelCommand::List(cmd) => cmd.run(state).await,
             NaelCommand::Info(cmd) => cmd.run(state).await,
             NaelCommand::Use(cmd) => cmd.run(state).await,
