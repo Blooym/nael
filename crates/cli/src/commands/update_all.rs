@@ -30,7 +30,7 @@ impl RunnableCommand for UpdateAll {
         } else {
             println!("All installations are up to date.")
         }
-        return Ok(());
+        Ok(())
     }
 }
 
