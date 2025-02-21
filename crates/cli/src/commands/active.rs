@@ -1,6 +1,6 @@
 use super::RunnableCommand;
-use crate::{formatting::emphasis_text, AppState};
-use anyhow::{anyhow, Context, Result};
+use crate::{AppState, formatting::emphasis_text};
+use anyhow::{Context, Result, anyhow};
 use clap::{Parser, ValueEnum};
 use nael_core::dalamud::DalamudInstallation;
 

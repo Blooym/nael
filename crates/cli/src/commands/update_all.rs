@@ -1,6 +1,6 @@
 use super::RunnableCommand;
-use crate::{formatting::warning_text, AppState};
-use anyhow::{anyhow, Result};
+use crate::{AppState, formatting::warning_text};
+use anyhow::{Result, anyhow};
 use clap::Parser;
 use nael_core::{dalamud::DalamudInstallation, fs::storage::AppStorage};
 

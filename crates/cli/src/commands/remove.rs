@@ -1,6 +1,6 @@
 use super::RunnableCommand;
 use crate::AppState;
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use clap::Parser;
 use nael_core::dalamud::DalamudInstallation;
 

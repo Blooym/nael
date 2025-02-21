@@ -1,6 +1,6 @@
 use super::RunnableCommand;
-use crate::{formatting::emphasis_text, AppState};
-use anyhow::{anyhow, Result};
+use crate::{AppState, formatting::emphasis_text};
+use anyhow::{Result, anyhow};
 use clap::Parser;
 use nael_core::dalamud::DalamudInstallation;
 
@@ -25,16 +25,19 @@ impl RunnableCommand for Install {
             .await
         {
             Ok(installation) => {
-                if let Some(version_info) = installation.get_version_info()? {
-                    println!(
-                        "Successfully installed branch '{}' with version '{}'.",
-                        &installation.branch_name, &version_info.assembly_version
-                    );
-                } else {
-                    println!(
-                        "Successfully installed branch '{}'",
-                        &installation.branch_name
-                    );
+                match installation.get_version_info()? {
+                    Some(version_info) => {
+                        println!(
+                            "Successfully installed branch '{}' with version '{}'.",
+                            &installation.branch_name, &version_info.assembly_version
+                        );
+                    }
+                    _ => {
+                        println!(
+                            "Successfully installed branch '{}'",
+                            &installation.branch_name
+                        );
+                    }
                 }
                 println!(
                     "Tip: run `{}` to select it as the active branch.",

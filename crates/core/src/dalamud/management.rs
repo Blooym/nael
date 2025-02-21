@@ -1,6 +1,6 @@
 use super::{sources::ReleaseSource, version_info::DalamudVersionInfo};
 use crate::fs::{archive, storage::AppStorage};
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result, anyhow};
 use serde::de::IgnoredAny;
 use std::{
     fmt::Debug,

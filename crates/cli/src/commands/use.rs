@@ -1,7 +1,7 @@
-use crate::{formatting::emphasis_text, AppState};
+use crate::{AppState, formatting::emphasis_text};
 
 use super::RunnableCommand;
-use anyhow::{anyhow, Result};
+use anyhow::{Result, anyhow};
 use clap::Parser;
 use nael_core::dalamud::DalamudInstallation;
 
@@ -23,15 +23,16 @@ impl RunnableCommand for Use {
             ));
         };
 
-        if let Err(err) = installation.set_active() {
-            Err(anyhow!(
+        match installation.set_active() {
+            Err(err) => Err(anyhow!(
                 "Failed to use switch to branch '{}': {}",
                 &self.branch_name,
                 err
-            ))
-        } else {
-            println!("Successfully set branch '{}' as active.", &self.branch_name);
-            Ok(())
+            )),
+            _ => {
+                println!("Successfully set branch '{}' as active.", &self.branch_name);
+                Ok(())
+            }
         }
     }
 }

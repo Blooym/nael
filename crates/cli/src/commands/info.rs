@@ -1,6 +1,6 @@
 use super::RunnableCommand;
-use crate::{formatting::emphasis_text, AppState};
-use anyhow::{anyhow, Result};
+use crate::{AppState, formatting::emphasis_text};
+use anyhow::{Result, anyhow};
 use clap::Parser;
 use colored::Colorize;
 use nael_core::dalamud::{DalamudInstallation, DalamudVersionInfo, ReleaseSource};

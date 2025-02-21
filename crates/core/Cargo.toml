@@ -4,11 +4,11 @@ authors = ["Blooym"]
 description = "Internals for managing different installations of Dalamud."
 version = "0.4.2"
 license = "MIT OR Apache-2.0"
-rust-version = "1.75.0"
-edition = "2021"
+rust-version = "1.85.0"
+edition = "2024"
 repository = "https://github.com/Blooym/nael"
 publish = true
-keywords = ["dalamud", "version-manager", "ffxiv"]
+keywords = ["dalamud", "version-manager"]
 
 [features]
 default = ["rustls-tls"]
@@ -17,7 +17,7 @@ native-tls = ["reqwest/native-tls"]
 
 [dependencies]
 zip = "2.2.2"
-anyhow = { version = "1.0.95", features = ["backtrace"] }
+anyhow = { version = "1.0.96", features = ["backtrace"] }
 directories = "6.0.0"
 indicatif = "0.17.11"
 reqwest = { version = "0.12.12", features = [
@@ -25,10 +25,10 @@ reqwest = { version = "0.12.12", features = [
     "macos-system-configuration",
     "http2",
 ], default-features = false }
-serde = { version = "1.0.217", features = ["derive"] }
-serde_json = "1.0.138"
+serde = { version = "1.0.218", features = ["derive"] }
+serde_json = "1.0.139"
 symlink = "0.1.0"
-tempfile = "3.16.0"
+tempfile = "3.17.1"
 
 [lints.rust]
 unsafe_code = "forbid"

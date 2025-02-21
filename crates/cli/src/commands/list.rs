@@ -1,5 +1,5 @@
 use super::RunnableCommand;
-use crate::{formatting::selected_value, AppState};
+use crate::{AppState, formatting::selected_value};
 use anyhow::Result;
 use clap::Parser;
 use nael_core::dalamud::DalamudInstallation;

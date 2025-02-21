@@ -9,8 +9,8 @@ mod update_all;
 mod r#use;
 
 pub use {
-    active::Active, info::Info, install::Install, list::List, r#use::Use, remove::Remove,
-    symlink_path::SymlinkPath, update::Update, update_all::UpdateAll,
+    active::Active, info::Info, install::Install, list::List, remove::Remove,
+    symlink_path::SymlinkPath, update::Update, update_all::UpdateAll, r#use::Use,
 };
 
 use crate::AppState;
