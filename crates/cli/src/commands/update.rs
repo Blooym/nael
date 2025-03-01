@@ -41,7 +41,7 @@ impl RunnableCommand for Update {
             None => {
                 if let Some(active) = DalamudInstallation::get_active(&state.storage)? {
                     println!(
-                        "Branch name not specified - inferring from active installation to be {}/",
+                        "Branch name not specified - inferring from active installation to be {}.",
                         emphasis_text(&active.branch_name)
                     );
                     Ok(active.branch_name)
