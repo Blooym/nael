@@ -2,7 +2,7 @@
 name = "nael_core"
 authors = ["Blooym"]
 description = "Internals for managing different installations of Dalamud."
-version = "0.4.2"
+version = "0.4.3"
 license = "MIT OR Apache-2.0"
 rust-version = "1.85.0"
 edition = "2024"
@@ -16,7 +16,7 @@ rustls-tls = ["reqwest/rustls-tls"]
 native-tls = ["reqwest/native-tls"]
 
 [dependencies]
-zip = "2.2.2"
+zip = "2.2.3"
 anyhow = { version = "1.0.96", features = ["backtrace"] }
 directories = "6.0.0"
 indicatif = "0.17.11"
