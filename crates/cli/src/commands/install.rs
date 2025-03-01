@@ -7,7 +7,7 @@ use nael_core::dalamud::DalamudInstallation;
 /// Install a Dalamud release from the specified branch.
 #[derive(Debug, Parser)]
 pub struct Install {
-    /// The name of the branch to install.
+    /// The branch to install.
     branch_name: String,
 }
 

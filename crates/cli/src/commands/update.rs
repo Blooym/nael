@@ -10,8 +10,10 @@ use nael_core::{dalamud::DalamudInstallation, fs::storage::AppStorage};
 /// Update a local branch to the latest version.
 #[derive(Debug, Parser)]
 pub struct Update {
-    /// The branch to install from.
-    branch_name: String,
+    /// The branch to update.
+    ///
+    /// Leave blank to imply the currently active branch.
+    branch_name: Option<String>,
 
     /// Forcefully update regardless of the current local or remote version information.
     #[clap(
@@ -34,12 +36,29 @@ pub struct Update {
 
 impl RunnableCommand for Update {
     async fn run(&self, state: &AppState) -> Result<()> {
-        let Some(installation) = DalamudInstallation::get(&self.branch_name, &state.storage)?
-        else {
+        let branch_name = match self.branch_name.clone() {
+            Some(branch_name) => Ok(branch_name),
+            None => {
+                if let Some(active) = DalamudInstallation::get_active(&state.storage)? {
+                    println!(
+                        "Branch name not specified - inferring from active installation to be {}/",
+                        emphasis_text(&active.branch_name)
+                    );
+                    Ok(active.branch_name)
+                } else {
+                    Err(anyhow!(
+                        "No branch name specified. You must set a branch as active to use the update command without arguments.\nTip: run '{}' to update a specific branch.",
+                        emphasis_text("nael update <branch>")
+                    ))
+                }
+            }
+        }?;
+
+        let Some(installation) = DalamudInstallation::get(&branch_name, &state.storage)? else {
             return Err(anyhow!(
                 "Branch '{}' is not installed.\nTip: run '{}' to try and install it.",
-                self.branch_name,
-                emphasis_text(&format!("nael install {}", self.branch_name))
+                branch_name,
+                emphasis_text(&format!("nael install {}", branch_name))
             ));
         };
 
@@ -57,9 +76,9 @@ impl RunnableCommand for Update {
         if self.force {
             println!(
                 "Forcefully updating branch '{}' to latest version.",
-                &self.branch_name
+                branch_name
             );
-            return update_branch(&self.branch_name, installation, state).await;
+            return update_branch(&branch_name, installation, state).await;
         }
 
         // Handle regular update.
@@ -68,7 +87,7 @@ impl RunnableCommand for Update {
             return Ok(());
         }
 
-        update_branch(&self.branch_name, installation, state).await
+        update_branch(&branch_name, installation, state).await
     }
 }
 

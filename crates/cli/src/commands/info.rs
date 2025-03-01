@@ -99,7 +99,7 @@ fn pretty_print_version_info(branch_name: &str, info: DalamudVersionInfo, remote
         - Version: {}\n\
         - Git Sha: {}\n\
         - Revision: {}\n\
-        - Key: {}\n\
+        - Key: {} (deprecated value)\n\
         - Supported GameVer: {}\n\
         - Runtime version: {}\n\
         - Runtime required: {}",
