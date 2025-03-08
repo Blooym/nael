@@ -43,7 +43,6 @@ async fn update_branch<S: AppStorage>(
     if installation.update(&state.release_source).await.is_err() {
         return Err(anyhow!("Failed to update branch '{}'", &branch_name));
     }
-    println!("Updated branch to the latest version.");
     Ok(())
 }
 
