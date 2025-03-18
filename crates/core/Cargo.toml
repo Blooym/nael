@@ -16,7 +16,7 @@ rustls-tls = ["reqwest/rustls-tls"]
 native-tls = ["reqwest/native-tls"]
 
 [dependencies]
-zip = "2.2.3"
+zip = "2.3.0"
 anyhow = { version = "1.0.96", features = ["backtrace"] }
 directories = "6.0.0"
 indicatif = "0.17.11"
