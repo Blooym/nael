@@ -19,7 +19,7 @@ name = "nael"
 path = "crates/cli/src/main.rs"
 
 [dependencies]
-nael_core = { version = "0.4.3", path = "crates/core" }
+nael_core = { version = "0.4.4", path = "crates/core" }
 anyhow = "1.0.97"
 clap = { version = "4.5.36", features = ["derive"] }
 tokio = { version = "1.44.2", features = ["full"] }
