@@ -2,7 +2,7 @@
 name = "nael_core"
 authors = ["Blooym"]
 description = "Internals for managing different installations of Dalamud."
-version = "0.4.3"
+version = "0.4.4"
 license = "MIT OR Apache-2.0"
 rust-version = "1.85.0"
 edition = "2024"
@@ -16,19 +16,19 @@ rustls-tls = ["reqwest/rustls-tls"]
 native-tls = ["reqwest/native-tls"]
 
 [dependencies]
-zip = "2.3.0"
-anyhow = { version = "1.0.96", features = ["backtrace"] }
+zip = "2.6.1"
+anyhow = { version = "1.0.97", features = ["backtrace"] }
 directories = "6.0.0"
 indicatif = "0.17.11"
-reqwest = { version = "0.12.12", features = [
+reqwest = { version = "0.12.15", features = [
     "charset",
     "macos-system-configuration",
     "http2",
 ], default-features = false }
-serde = { version = "1.0.218", features = ["derive"] }
-serde_json = "1.0.139"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
 symlink = "0.1.0"
-tempfile = "3.17.1"
+tempfile = "3.19.1"
 
 [lints.rust]
 unsafe_code = "forbid"

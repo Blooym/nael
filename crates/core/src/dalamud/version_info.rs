@@ -21,20 +21,11 @@ use std::{fmt::Debug, fs::read_to_string, path::Path, str::FromStr};
 #[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "PascalCase")]
 pub struct DalamudVersionInfo {
-    /// Depending on the branch, this will either be the assembly version `major.minor.patch.revision` or a Git commit hash.
-    /// Somewhat confusing, this field is named 'assembly_version' remotely anyway.
+    /// Assembly version string of Dalamud at release.
     pub assembly_version: String,
-    /// The supported version of FFXIV for this Dalamud release.
-    pub supported_game_ver: Option<String>,
-    /// The .NET runtime version used for running this release.
-    pub runtime_version: String,
-    /// Whether or not the .NET runtime is required to run the release.
-    pub runtime_required: bool,
-    /// The "beta key" that would be used to enable the release with launchers.
-    pub key: Option<String>,
-    /// The git commit hash of the release.
+    /// Git commit hash of the Dalamud at release.
     pub git_sha: Option<String>,
-    /// The revision number of the release.
+    /// Revision number of Dalamud at release.
     pub revision: Option<String>,
 }
 

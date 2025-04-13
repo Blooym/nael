@@ -98,19 +98,11 @@ fn pretty_print_version_info(branch_name: &str, info: DalamudVersionInfo, remote
         "{} for branch {}:\n\
         - Version: {}\n\
         - Git Sha: {}\n\
-        - Revision: {}\n\
-        - Key: {} (deprecated value)\n\
-        - Supported GameVer: {}\n\
-        - Runtime version: {}\n\
-        - Runtime required: {}",
+        - Revision: {}",
         format,
         branch_name.bold(),
         info.assembly_version,
         info.git_sha.unwrap_or("unknown".to_owned()),
         info.revision.unwrap_or("unknown".to_owned()),
-        info.key.unwrap_or("N/A".to_owned()),
-        info.supported_game_ver.unwrap_or("unknown".to_owned()),
-        info.runtime_version,
-        info.runtime_required
     );
 }
